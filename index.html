@@ -434,7 +434,7 @@ td.empty{white-space:normal}
           <input id="searchInput" type="search" placeholder="Cari tugas, link, menu…" aria-label="Cari">
           <div class="dropdown" id="searchDd"></div>
         </div>
-        <a class="icon-btn" href="https://outlook.office.com/mail/" target="_blank" rel="noopener" title="Buka Outlook" id="mailBtn"></a>
+    
         <div style="position:relative">
           <button class="icon-btn" id="bellBtn" title="Notifikasi" aria-label="Notifikasi"></button>
           <div class="dropdown" id="bellDd"></div>
@@ -506,7 +506,6 @@ td.empty{white-space:normal}
                 <div class="seg" id="modeSeg" role="radiogroup" aria-label="Lokasi kerja">
                   <button data-mode="WFO" class="on">WFO</button>
                   <button data-mode="WFH">WFH</button>
-                  <button data-mode="Dinas Luar">Dinas Luar</button>
                 </div>
                 <button class="big-btn in" id="attBtn"></button>
                 <div class="hint" id="attHint" style="text-align:center"></div>
@@ -751,7 +750,6 @@ const DEFAULTS = {
     dio: '',
     suratKeluar: '',   // link Excel Online "Register Nomor Surat Keluar"
     pegawai: '',       // link Excel Online "Dashboard Data Pegawai / Cuti"
-    outlook: 'https://outlook.office.com/mail/',
     teams: 'https://teams.microsoft.com',
     web: 'https://www.jamkrindosyariah.co.id'
   }
@@ -761,7 +759,6 @@ const LINKS_META = [
   {key:'dio',         label:'Digital Office (DIO)',             sub:'Input & disposisi surat masuk', icon:'grid',  color:'c-blue'},
   {key:'suratKeluar', label:'Register Nomor Surat Keluar',       sub:'Excel Online · permintaan nomor', icon:'send', color:'c-green'},
   {key:'pegawai',     label:'Dashboard Data Pegawai & Cuti',     sub:'Excel Online · status, jabatan, cuti', icon:'users', color:'c-amber'},
-  {key:'outlook',     label:'Email Outlook',                     sub:'Microsoft 365 mail', icon:'mail', color:'c-sky'},
   {key:'teams',       label:'Microsoft Teams',                   sub:'Chat & rapat online', icon:'chat', color:'c-violet'},
   {key:'web',         label:'Website Jamkrindo Syariah',         sub:'jamkrindosyariah.co.id', icon:'globe', color:'c-rose'}
 ];
@@ -774,14 +771,14 @@ const TASKS = [
     unit:'surat diinput',
     steps:[
       'Terima surat masuk (fisik maupun email). Periksa kelengkapan: kop, nomor, tanggal, perihal, dan lampiran.',
-      'Pindai (scan) surat beserta lampirannya ke PDF. Beri nama file: <b>TanggalSurat_Pengirim_Perihal</b>.',
-      'Buka <b>dio.jamkrindosyariah.co.id</b> lalu login dengan akun yang diberikan pembimbing.',
-      'Masuk ke menu <b>Surat Masuk</b> → pilih tambah/registrasi surat baru.',
+      'Pindai (scan) surat beserta lampirannya ke PDF. Beri nama file: <b>SM-XXXX-XX-2026</b>.',
+      'Buka <b>Digital Office (DIO) Jamkrindo Syariah</b> lalu login dengan akun yang diberikan pembimbing.',
+      'Masuk ke menu <b>Registrasi</b> → pilih <b>Scan Surat</b>.',
       'Isi data: nomor surat, tanggal surat, tanggal diterima, pengirim/instansi, perihal, dan sifat surat. Unggah file PDF.',
-      'Pilih tujuan disposisi (Direksi/divisi terkait) sesuai arahan, lalu simpan/kirim.',
+      'Pilih tujuan (Direksi/Kepala Divisi terkait) sesuai arahan, lalu klik <b>Submit</b>.',
       'Arsipkan surat fisik sesuai tata arsip Sekretaris Perusahaan.'
     ],
-    tip:'Nama menu di DIO bisa sedikit berbeda. Jika ragu soal tujuan disposisi, tanyakan pembimbing sebelum mengirim.'
+    tip:'Nama menu di DIO bisa sedikit berbeda. Jika ragu soal tujuan, tanyakan pembimbing sebelum mengirim.'
   },
   {
     id:'t2', icon:'send', color:'c-green', ring:'#9bd21c', linkKey:'suratKeluar', linkLabel:'Buka Excel Surat Keluar',
@@ -789,12 +786,12 @@ const TASKS = [
     short:'Berikan nomor surat keluar sesuai permintaan yang masuk di Excel Online.',
     unit:'nomor diberikan',
     steps:[
-      'Buka file <b>Register Nomor Surat Keluar</b> di Excel Online (tombol Buka link).',
-      'Cek baris permintaan terbaru yang masuk otomatis: nama pemohon, unit kerja, perihal, tujuan surat, dan jenis surat.',
-      'Ambil nomor urut berikutnya. Jangan sampai ada nomor yang terlewat atau dobel.',
-      'Susun nomor sesuai format/kode klasifikasi surat yang berlaku di perusahaan.',
-      'Isi kolom nomor surat, tanggal, dan ubah status menjadi <b>Sudah diberikan</b>. Excel Online menyimpan otomatis.',
-      'Informasikan nomor surat ke pemohon (email/Teams) bila diperlukan.'
+      'Buka link excel <b>Agenda Surat Keluar</b> dan <b>Permintaan Nomor Surat Keluar</b>',
+      'Cek permintaan terbaru pada Perihal dan Tujuan di excel Permintaan.',
+      'Copy dan Paste Sifat Surat, Perihal, Asal Surat, Tujuan, PIC, dan Keterangan ke dalam excel <b>Agenda</b>.',
+      'Nomor otomatis akan muncul, copy dan paste kembali ke excel <b>Permintaan.</b>',
+      'Arsip scanan / soft file surat keluar yang sudah di tandatangani + cap ke dalam folder OneDrive kearsipan.',
+      'Informasikan ke pemohon via Mteams jika perlu.'
     ],
     tip:'Jangan menghapus baris. Jika nomor batal dipakai, tandai “BATAL” agar urutan nomor tetap rapi dan dapat ditelusuri.'
   },
@@ -804,14 +801,14 @@ const TASKS = [
     short:'Perbarui data cuti, jabatan, unit, dan status kepegawaian di dashboard Excel Online.',
     unit:'data diperbarui',
     steps:[
-      'Kumpulkan dokumen dasar perubahan: SK, nota dinas, atau persetujuan cuti.',
-      'Buka <b>Dashboard Data Pegawai</b> di Excel Online (tombol Buka link).',
-      'Cari pegawai dengan <b>Ctrl + F</b> menggunakan nama atau NIP.',
-      'Perbarui kolom yang relevan: status cuti (jenis, tanggal mulai–selesai), jabatan, unit kerja, atau status kepegawaian.',
-      'Isi kolom keterangan dengan nomor dokumen dasar dan tanggal pembaruan.',
+      'Kumpulkan SK/SPT/Surat Cuti dari SDM di Mteams.',
+      'Buka <b>Dashboard Data Pegawai</b> di Excel Online.',
+      'Lihat keterangan data pegawai pada SK/SPT/Surat Cuti.',
+      'Perbarui cuti, jabatan, unit, dan atau status pada kolom yang relevan pada excel.',
+      'Isi keterangan nomor dokumen dan tanggal.',
       'Periksa ulang, lalu laporkan ke pembimbing jika menemukan data yang tidak sesuai.'
     ],
-    tip:'Data pegawai bersifat rahasia. Jangan mengunduh, memotret, atau membagikannya di luar keperluan pekerjaan.'
+    tip:'Data pegawai bersifat rahasia. Dilarang mengunduh, memotret, atau membagikannya di luar keperluan pekerjaan.'
   }
 ];
 
