@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JSR Corsec Intern Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#253591; --primary-700:#1b2770; --primary-50:#EEF0FA; --primary-100:#DCE0F3; --primary-200:#B9C0E6;
+  --accent:#9bd21c; --accent-50:#F2F9E0; --accent-100:#E3F2BC; --accent-ink:#4E7300;
+  --bg:#FFFFFF; --soft:#F7F8FC; --line:#E9EBF3; --ink:#1A1E3A; --ink-2:#3B4062; --muted:#8A8FA8;
+  --warn:#F2A33A; --warn-50:#FEF4E6; --danger:#E5484D; --danger-50:#FDECEC;
+  --radius:16px; --radius-sm:10px;
+  --shadow:0 1px 2px rgba(37,53,145,.04), 0 8px 24px rgba(37,53,145,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:'Poppins',system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;font-size:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:14px;color:var(--ink)}
+a{color:inherit;text-decoration:none}
+.ic{width:20px;height:20px;flex-shrink:0}
+.ic.sm{width:16px;height:16px}.ic.lg{width:24px;height:24px}
+
+/* ---------- Layout ---------- */
+.app{display:grid;grid-template-columns:248px 1fr;min-height:100vh}
+.sidebar{position:sticky;top:0;height:100vh;border-right:1px solid var(--line);padding:28px 0 24px;display:flex;flex-direction:column;background:#fff}
+.brand{display:flex;align-items:center;gap:12px;padding:0 26px 34px}
+.brand b{display:block;font-size:15px;color:var(--primary);line-height:1.2}
+.brand span{font-size:12px;color:var(--muted)}
+.logo-mark{width:34px;height:34px;flex-shrink:0}
+.nav{display:flex;flex-direction:column;gap:4px}
+.nav button{display:flex;align-items:center;gap:14px;padding:11px 26px;color:var(--muted);font-weight:500;font-size:13.5px;position:relative;text-align:left;transition:color .15s,background .15s}
+.nav button:hover{color:var(--primary);background:var(--soft)}
+.nav button.active{color:var(--primary);font-weight:600}
+.nav button.active::after{content:"";position:absolute;right:0;top:8px;bottom:8px;width:3px;border-radius:3px 0 0 3px;background:var(--primary)}
+.nav button.active .ic{color:var(--primary)}
+.nav .badge{margin-left:auto;background:var(--accent);color:var(--primary-700);font-size:11px;font-weight:600;border-radius:20px;padding:0 7px;line-height:18px}
+.help-card{margin:auto 20px 0;background:var(--primary-50);border-radius:var(--radius);padding:18px 16px 16px;text-align:center}
+.help-card svg.ill{width:120px;height:74px;margin:-44px auto 6px;display:block}
+.help-card b{display:block;font-size:13.5px;color:var(--ink)}
+.help-card span{display:block;font-size:11.5px;color:var(--muted);margin:2px 0 12px}
+
+main{min-width:0;padding:26px 34px 40px}
+.topbar{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.topbar h1{font-size:20px;font-weight:600;color:var(--ink)}
+.top-actions{margin-left:auto;display:flex;align-items:center;gap:6px}
+.icon-btn{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--ink-2);position:relative;transition:background .15s}
+.icon-btn:hover{background:var(--soft);color:var(--primary)}
+.icon-btn .dot{position:absolute;top:8px;right:9px;width:8px;height:8px;border-radius:50%;background:var(--accent);border:2px solid #fff}
+.search{position:relative}
+.search input{width:240px;height:40px;border:1px solid var(--line);border-radius:12px;padding:0 14px 0 38px;background:var(--soft);outline:none;transition:border .15s,background .15s}
+.search input:focus{border-color:var(--primary-200);background:#fff}
+.search .ic{position:absolute;left:12px;top:10px;color:var(--muted)}
+.dropdown{position:absolute;top:calc(100% + 8px);right:0;width:320px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 40px rgba(27,39,112,.14);padding:8px;z-index:40;display:none;max-height:380px;overflow:auto}
+.dropdown.open{display:block}
+.dd-item{display:flex;gap:12px;align-items:center;padding:9px 10px;border-radius:10px;cursor:pointer;width:100%;text-align:left}
+.dd-item:hover,.dd-item.hl{background:var(--soft)}
+.dd-item small{display:block;color:var(--muted);font-size:11.5px}
+.dd-empty{padding:14px;color:var(--muted);font-size:13px;text-align:center}
+.dd-title{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:6px 10px}
+.profile{display:flex;align-items:center;gap:10px;padding:4px 6px 4px 4px;border-radius:14px;margin-left:6px}
+.profile:hover{background:var(--soft)}
+.avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#4253c0);color:#fff;display:grid;place-items:center;font-weight:600;font-size:14px;flex-shrink:0}
+.profile .meta{line-height:1.25;text-align:left}
+.profile .meta b{font-size:13px;display:block}
+.profile .meta small{font-size:11px;color:var(--muted)}
+
+/* ---------- Generic ---------- */
+.page{display:none;animation:fade .25s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.grid-2{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start}
+.col{display:flex;flex-direction:column;gap:24px;min-width:0}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.card-h h2,.sec-h h2{font-size:16px;font-weight:600}
+.sec-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.link{font-size:12.5px;color:var(--primary);font-weight:500;text-decoration:underline;text-underline-offset:3px}
+.link:hover{color:var(--primary-700)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:38px;padding:0 16px;border-radius:10px;font-weight:500;font-size:13px;transition:background .15s,transform .05s,box-shadow .15s;white-space:nowrap}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-700)}
+.btn-accent{background:var(--accent);color:var(--primary-700);font-weight:600}
+.btn-accent:hover{background:#8cc010}
+.btn-ghost{background:var(--primary-50);color:var(--primary)}
+.btn-ghost:hover{background:var(--primary-100)}
+.btn-line{border:1px solid var(--line);color:var(--ink-2);background:#fff}
+.btn-line:hover{border-color:var(--primary-200);color:var(--primary)}
+.btn-danger{background:var(--danger-50);color:var(--danger)}
+.btn-sm{height:32px;padding:0 12px;font-size:12.5px;border-radius:9px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;padding:3px 10px;border-radius:20px}
+.pill.ok{background:var(--accent-50);color:var(--accent-ink)}
+.pill.warn{background:var(--warn-50);color:#A86100}
+.pill.info{background:var(--primary-50);color:var(--primary)}
+.pill.mute{background:var(--soft);color:var(--muted)}
+.dotc{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
+.muted{color:var(--muted)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;font-weight:500;color:var(--ink-2)}
+.input{height:40px;border:1px solid var(--line);border-radius:10px;padding:0 12px;background:#fff;outline:none;width:100%}
+.input:focus{border-color:var(--primary-200);box-shadow:0 0 0 3px var(--primary-50)}
+textarea.input{height:auto;padding:10px 12px;resize:vertical}
+
+/* ---------- Dashboard ---------- */
+.hero{position:relative;background:var(--primary);border-radius:var(--radius);color:#fff;padding:26px 28px;min-height:178px;overflow:visible;display:flex}
+.hero::before{content:"";position:absolute;inset:0;border-radius:inherit;background:radial-gradient(circle at 85% 30%,rgba(155,210,28,.22),transparent 45%),radial-gradient(circle at 10% 120%,rgba(255,255,255,.08),transparent 40%);pointer-events:none}
+.hero-text{position:relative;max-width:58%;z-index:1}
+.hero h2{font-size:22px;font-weight:600;margin-bottom:6px}
+.hero p{font-size:13px;opacity:.9;max-width:380px}
+.hero .hero-link{display:inline-flex;align-items:center;gap:6px;margin-top:18px;font-size:12.5px;color:#fff;text-decoration:underline;text-underline-offset:3px}
+.hero-ill{position:absolute;right:18px;bottom:0;width:250px;height:212px}
+.intern-progress{margin-top:16px;max-width:300px}
+.intern-progress .bar{height:6px;border-radius:6px;background:rgba(255,255,255,.2);overflow:hidden;margin-top:6px}
+.intern-progress .bar i{display:block;height:100%;background:var(--accent);border-radius:6px}
+.intern-progress small{font-size:11.5px;opacity:.85}
+
+.att{display:grid;grid-template-columns:1.1fr 1fr;gap:20px;align-items:center}
+.att-clock{font-size:34px;font-weight:600;color:var(--primary);letter-spacing:.5px;line-height:1.1}
+.att-clock small{font-size:16px;color:var(--muted);font-weight:500}
+.att-date{color:var(--muted);font-size:13px;margin-top:2px}
+.att-times{display:flex;gap:10px;margin-top:16px}
+.att-times div{flex:1;background:var(--soft);border-radius:12px;padding:10px 12px}
+.att-times small{display:block;color:var(--muted);font-size:11.5px}
+.att-times b{font-size:16px;font-weight:600}
+.att-actions{display:flex;flex-direction:column;gap:10px}
+.seg{display:flex;background:var(--soft);border-radius:10px;padding:3px}
+.seg button{flex:1;height:32px;border-radius:8px;font-size:12.5px;font-weight:500;color:var(--muted)}
+.seg button.on{background:#fff;color:var(--primary);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.big-btn{height:52px;border-radius:12px;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;transition:background .15s,transform .05s}
+.big-btn:active{transform:scale(.99)}
+.big-btn.in{background:var(--primary);color:#fff}
+.big-btn.in:hover{background:var(--primary-700)}
+.big-btn.out{background:var(--accent);color:var(--primary-700)}
+.big-btn.out:hover{background:#8cc010}
+.big-btn.done{background:var(--soft);color:var(--muted);cursor:default}
+
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.stat{display:flex;align-items:center;gap:14px;padding:18px 20px;cursor:pointer;transition:border .15s,transform .15s}
+.stat:hover{border-color:var(--primary-200);transform:translateY(-1px)}
+.stat .num{font-size:30px;font-weight:600;color:var(--ink);min-width:34px;line-height:1}
+.stat .lbl{flex:1;min-width:0}
+.stat .lbl b{display:block;font-size:13px;font-weight:600;line-height:1.3}
+.stat .lbl small{display:block;color:var(--muted);font-size:11.5px;margin-top:2px}
+.ring{width:48px;height:48px;position:relative;flex-shrink:0}
+.ring svg{width:48px;height:48px;transform:rotate(-90deg)}
+.ring span{position:absolute;inset:0;display:grid;place-items:center;font-size:10.5px;font-weight:600;color:var(--muted)}
+.ring span .ic{width:18px;height:18px;color:var(--accent-ink)}
+
+table{width:100%;border-collapse:collapse}
+th{font-size:11.5px;font-weight:500;color:var(--muted);text-align:left;padding:0 10px 10px;white-space:nowrap}
+td{padding:11px 10px;font-size:13px;border-top:1px solid var(--line);white-space:nowrap}
+td .status{display:inline-flex;align-items:center;gap:8px}
+.row-act{opacity:.4;transition:opacity .15s}
+tr:hover .row-act{opacity:1}
+.empty{padding:26px;text-align:center;color:var(--muted);font-size:13px}
+
+/* mini calendar */
+.mcal-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.mcal-h b{font-size:15px;font-weight:600;text-transform:capitalize}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);row-gap:4px;text-align:center}
+.cal-grid .wd{font-size:10.5px;color:var(--muted);font-weight:500;padding-bottom:8px}
+.cal-day{position:relative;height:34px;display:grid;place-items:center;font-size:12.5px;border-radius:10px;cursor:pointer;color:var(--ink-2)}
+.cal-day:hover{background:var(--soft)}
+.cal-day.out{color:#C6C9D8}
+.cal-day.we{color:var(--muted)}
+.cal-day.today{background:var(--primary);color:#fff;font-weight:600}
+.cal-day.sel:not(.today){background:var(--primary-50);color:var(--primary);font-weight:600}
+.cal-day .dots{position:absolute;bottom:3px;left:0;right:0;display:flex;justify-content:center;gap:3px}
+.cal-day .dots i{width:4px;height:4px;border-radius:50%}
+.cal-legend{display:flex;gap:14px;margin-top:12px;font-size:11.5px;color:var(--muted);flex-wrap:wrap}
+.cal-legend span{display:inline-flex;align-items:center;gap:6px}
+
+/* quick links list */
+.ql{display:flex;flex-direction:column;gap:4px}
+.ql-item{display:flex;align-items:center;gap:12px;padding:9px 8px;border-radius:12px;transition:background .15s;cursor:pointer;text-align:left;width:100%}
+.ql-item:hover{background:var(--soft)}
+.ql-ico{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;flex-shrink:0}
+.ql-item .t{flex:1;min-width:0}
+.ql-item .t b{display:block;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ql-item .t small{display:block;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ql-go{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;color:var(--primary);background:var(--primary-50)}
+.ql-item:hover .ql-go{background:var(--primary);color:#fff}
+.c-blue{background:var(--primary-50);color:var(--primary)}
+.c-green{background:var(--accent-50);color:var(--accent-ink)}
+.c-amber{background:var(--warn-50);color:#B66A00}
+.c-sky{background:#E8F4FD;color:#1C6FB8}
+.c-rose{background:#FDEDF1;color:#C23C61}
+.c-violet{background:#F1ECFD;color:#6A3FC8}
+
+/* ---------- Tasks ---------- */
+.task-list{display:flex;flex-direction:column;gap:16px}
+.task{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;padding:20px 22px}
+.task.is-done{background:linear-gradient(0deg,rgba(155,210,28,.06),rgba(155,210,28,.06)),#fff;border-color:var(--accent-100)}
+.task-ico{width:52px;height:52px;border-radius:14px;display:grid;place-items:center}
+.task-ico .ic{width:24px;height:24px}
+.task h3{font-size:15px;font-weight:600;line-height:1.35;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.task p{color:var(--muted);font-size:12.5px;margin-top:3px}
+.task-btns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.task-side{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.counter{display:flex;align-items:center;gap:4px;background:var(--soft);border-radius:10px;padding:3px}
+.counter button{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--primary)}
+.counter button:hover{background:#fff}
+.counter b{min-width:30px;text-align:center;font-size:15px}
+.counter-lbl{font-size:11px;color:var(--muted);text-align:right}
+.check{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:500;color:var(--ink-2);cursor:pointer;user-select:none}
+.check input{display:none}
+.check .box{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--primary-200);display:grid;place-items:center;color:#fff;transition:background .15s,border .15s}
+.check .box .ic{width:14px;height:14px;opacity:0}
+.check input:checked+.box{background:var(--accent);border-color:var(--accent)}
+.check input:checked+.box .ic{opacity:1;color:var(--primary-700)}
+.todo-form{display:grid;grid-template-columns:1fr 150px 130px auto;gap:10px;margin-bottom:14px}
+.todo{display:flex;align-items:center;gap:12px;padding:12px 4px;border-top:1px solid var(--line)}
+.todo:first-child{border-top:0}
+.todo .t{flex:1;min-width:0}
+.todo .t b{font-weight:500;font-size:13.5px;display:block;word-break:break-word}
+.todo.done .t b{text-decoration:line-through;color:var(--muted)}
+.todo .t small{color:var(--muted);font-size:11.5px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:4px}
+.week div{text-align:center}
+.week .bar{height:70px;background:var(--soft);border-radius:8px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;gap:2px}
+.week .bar i{display:block;width:100%}
+.week small{display:block;font-size:10.5px;color:var(--muted);margin-top:6px}
+.week b{font-size:12px}
+
+/* ---------- Onboarding / About ---------- */
+.about-hero{background:var(--primary);color:#fff;border-radius:var(--radius);padding:30px;position:relative;overflow:hidden}
+.about-hero::after{content:"";position:absolute;right:-60px;top:-60px;width:260px;height:260px;border-radius:50%;border:40px solid rgba(155,210,28,.18)}
+.about-hero .eyebrow{display:inline-block;background:rgba(155,210,28,.2);color:var(--accent);font-size:11.5px;font-weight:600;padding:4px 10px;border-radius:20px;letter-spacing:.04em;margin-bottom:12px}
+.about-hero h2{font-size:24px;font-weight:600;line-height:1.3;max-width:640px;position:relative;z-index:1}
+.about-hero p{opacity:.88;margin-top:10px;max-width:640px;font-size:13.5px;position:relative;z-index:1}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.fact{padding:16px 18px}
+.fact small{display:block;color:var(--muted);font-size:11.5px}
+.fact b{display:block;font-size:17px;font-weight:600;color:var(--primary);margin-top:4px;line-height:1.3}
+.fact span{display:block;font-size:11.5px;color:var(--ink-2);margin-top:2px}
+.vm{display:grid;grid-template-columns:1fr 1.3fr;gap:24px}
+.vision{font-size:17px;font-weight:500;line-height:1.5;color:var(--primary);border-left:4px solid var(--accent);padding-left:14px}
+.missions{display:flex;flex-direction:column;gap:10px}
+.missions div{display:flex;gap:12px;align-items:flex-start}
+.missions i{font-style:normal;width:26px;height:26px;border-radius:8px;background:var(--accent-50);color:var(--accent-ink);display:grid;place-items:center;font-weight:600;font-size:12px;flex-shrink:0}
+.values{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+td.empty{white-space:normal}
+.value{text-align:center;padding:16px 10px;border-radius:14px;background:var(--soft)}
+.value .letter{width:40px;height:40px;border-radius:12px;background:var(--primary);color:#fff;font-weight:700;font-size:18px;display:grid;place-items:center;margin:0 auto 10px}
+.value:nth-child(even) .letter{background:var(--accent);color:var(--primary-700)}
+.value b{display:block;font-size:12.5px}
+.value small{display:block;font-size:11px;color:var(--muted);margin-top:4px;line-height:1.4}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{height:32px;padding:0 14px;border-radius:20px;font-size:12.5px;font-weight:500;color:var(--ink-2);border:1px solid var(--line);background:#fff}
+.chip.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.products{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.product{border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;transition:border .15s}
+.product:hover{border-color:var(--primary-200)}
+.product .tag{align-self:flex-start;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:12px}
+.product b{font-size:13.5px;line-height:1.35}
+.product p{font-size:12px;color:var(--muted)}
+.tree{display:flex;flex-direction:column;align-items:center;gap:0}
+.node{border:1px solid var(--line);border-radius:14px;padding:12px 18px;text-align:center;background:#fff;width:100%;max-width:340px}
+.node b{display:block;font-size:13px}
+.node small{color:var(--muted);font-size:11.5px}
+.node.main{background:var(--primary);color:#fff;border-color:var(--primary)}
+.node.main small{color:rgba(255,255,255,.8)}
+.node.unit{background:var(--accent-50);border-color:var(--accent-100)}
+.vline{width:2px;height:22px;background:var(--primary-200)}
+.roles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.role{display:flex;gap:12px;padding:12px;border-radius:12px;background:var(--soft)}
+.role .ql-ico{width:36px;height:36px}
+.role b{font-size:13px;display:block}
+.role small{font-size:11.5px;color:var(--muted)}
+.gloss{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px}
+.gloss div{padding:10px 0;border-bottom:1px dashed var(--line)}
+.gloss b{font-size:13px;color:var(--primary)}
+.gloss p{font-size:12px;color:var(--ink-2)}
+.ob-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.ob-item:first-of-type{border-top:0}
+.ob-item span{font-size:13px}
+.ob-item.done span{color:var(--muted);text-decoration:line-through}
+.contact{display:flex;flex-direction:column;gap:12px;font-size:12.5px}
+.contact div{display:flex;gap:10px;align-items:flex-start;color:var(--ink-2)}
+.contact .ic{color:var(--primary);margin-top:1px}
+.src{font-size:11px;color:var(--muted);margin-top:4px}
+
+/* ---------- Calendar page ---------- */
+.bigcal .cal-day{height:82px;align-items:start;justify-items:start;padding:8px;border:1px solid var(--line);border-radius:12px;font-size:13px;display:flex;flex-direction:column;gap:4px;overflow:hidden}
+.bigcal .cal-grid{gap:6px}
+.bigcal .cal-day.today{background:var(--primary-50);color:var(--primary);border-color:var(--primary-200)}
+.bigcal .cal-day.today .dnum{background:var(--primary);color:#fff;border-radius:7px;padding:0 6px}
+.bigcal .cal-day.sel{border-color:var(--primary);box-shadow:0 0 0 2px var(--primary-50)}
+.bigcal .ev{font-size:10.5px;line-height:1.3;padding:2px 6px;border-radius:5px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;text-align:left}
+.bigcal .att-mark{font-size:10px;color:var(--accent-ink);display:flex;align-items:center;gap:4px}
+.agenda-item{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line);align-items:flex-start}
+.agenda-item:first-child{border-top:0}
+.agenda-item .bar{width:4px;align-self:stretch;border-radius:4px}
+.agenda-item .t{flex:1}
+.agenda-item b{font-size:13px;font-weight:600;display:block}
+.agenda-item small{color:var(--muted);font-size:11.5px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid .full{grid-column:1/-1}
+
+/* ---------- Settings ---------- */
+.set-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.set-grid .card .form-grid{gap:14px}
+.hint{font-size:11.5px;color:var(--muted)}
+
+/* ---------- Modal / Toast / Lock ---------- */
+.overlay{position:fixed;inset:0;background:rgba(18,24,64,.42);display:none;align-items:center;justify-content:center;padding:16px;z-index:60;backdrop-filter:blur(2px)}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:20px;width:100%;max-width:560px;max-height:90vh;overflow:auto;padding:26px;box-shadow:0 30px 60px rgba(18,24,64,.25);animation:pop .2s ease}
+@keyframes pop{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
+.modal-h{display:flex;align-items:flex-start;gap:14px;margin-bottom:16px}
+.modal-h h3{font-size:17px;font-weight:600;line-height:1.35}
+.modal-h p{color:var(--muted);font-size:12.5px}
+.modal-h .icon-btn{margin-left:auto;margin-top:-6px;margin-right:-8px}
+.steps{counter-reset:s;display:flex;flex-direction:column;gap:12px;margin:6px 0 16px}
+.steps li{list-style:none;display:flex;gap:12px;font-size:13px;color:var(--ink-2)}
+.steps li::before{counter-increment:s;content:counter(s);width:24px;height:24px;border-radius:50%;background:var(--primary-50);color:var(--primary);font-weight:600;font-size:12px;display:grid;place-items:center;flex-shrink:0}
+.tipbox{background:var(--accent-50);border-radius:12px;padding:12px 14px;font-size:12.5px;color:var(--ink-2);display:flex;gap:10px;margin-bottom:16px}
+.tipbox .ic{color:var(--accent-ink)}
+.modal-f{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+#toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 18px;border-radius:12px;font-size:13px;opacity:0;pointer-events:none;transition:all .25s;z-index:80;display:flex;gap:10px;align-items:center;max-width:calc(100% - 32px)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast .ic{color:var(--accent)}
+#lock{position:fixed;inset:0;background:#fff;z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
+#lock.open{display:flex}
+.lock-box{width:100%;max-width:360px;text-align:center}
+.lock-box .logo-mark{width:56px;height:56px;margin:0 auto 18px}
+.lock-box h2{font-size:20px;color:var(--primary)}
+.lock-box p{color:var(--muted);font-size:13px;margin:4px 0 22px}
+.pin{height:52px;text-align:center;letter-spacing:12px;font-size:22px;font-weight:600}
+.lock-err{color:var(--danger);font-size:12.5px;min-height:20px;margin:8px 0}
+.lock-box .btn{width:100%;height:46px}
+.shake{animation:shake .35s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+
+.bottom-nav{display:none}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1180px){
+  .grid-2{grid-template-columns:1fr}
+  .facts{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .sidebar{display:none}
+  main{padding:18px 16px 96px}
+  .bottom-nav{display:flex;position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);z-index:30;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+  .bottom-nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;color:var(--muted);padding:6px 0;border-radius:10px}
+  .bottom-nav button.active{color:var(--primary);font-weight:600}
+  .search input{width:160px}
+  .profile .meta{display:none}
+  .vm,.set-grid,.roles,.gloss{grid-template-columns:1fr}
+  .todo-form{grid-template-columns:1fr 1fr}
+  .todo-form input[type=text]{grid-column:1/-1}
+}
+@media (max-width:640px){
+  .topbar{flex-wrap:wrap}
+  .topbar h1{font-size:18px}
+  .search{order:3;width:100%}
+  .search input{width:100%}
+  .dropdown{width:100%}
+  .hero{padding:22px 20px;min-height:auto}
+  .hero-text{max-width:100%}
+  .hero-ill{display:none}
+  .att{grid-template-columns:1fr}
+  .stat-grid{grid-template-columns:1fr}
+  .task{grid-template-columns:auto 1fr}
+  .task-side{grid-column:1/-1;flex-direction:row;justify-content:space-between;align-items:center}
+  .values{grid-template-columns:repeat(2,1fr)}
+  .facts{grid-template-columns:1fr 1fr}
+  .top-actions{width:100%;flex-wrap:wrap}
+  .top-actions .search{flex:1 1 100%;order:3}
+  .top-actions>div:last-child{margin-left:auto}
+  .table-wrap{overflow-x:auto;margin:0 -10px}
+  .bigcal .cal-day{height:56px;padding:4px;font-size:11.5px}
+  .bigcal .ev{display:none}
+  .bigcal .cal-day .dots{display:flex}
+  .form-grid{grid-template-columns:1fr}
+  .card{padding:18px}
+}
+.bigcal .cal-day .dots{display:none}
+</style>
+</head>
+<body>
+
+<!-- ============ LOCK SCREEN ============ -->
+<div id="lock" role="dialog" aria-modal="true" aria-label="Masuk">
+  <form class="lock-box" id="lockForm" autocomplete="off">
+    <svg class="logo-mark" viewBox="0 0 40 40" aria-hidden="true"><rect x="6" y="6" width="20" height="20" rx="5" transform="rotate(45 16 16)" fill="#253591"/><rect x="14" y="14" width="18" height="18" rx="5" transform="rotate(45 23 23)" fill="#9bd21c" opacity=".9"/></svg>
+    <h2>JSR Corsec Intern Hub</h2>
+    <p id="lockHello">Masukkan PIN untuk membuka dashboard</p>
+    <input class="input pin" id="pinInput" type="password" inputmode="numeric" maxlength="8" placeholder="••••" aria-label="PIN">
+    <div class="lock-err" id="lockErr"></div>
+    <button class="btn btn-primary" type="submit">Masuk</button>
+    <p class="hint" style="margin-top:16px">Akses khusus peserta magang Sekretaris Perusahaan<br>PT Penjaminan Jamkrindo Syariah</p>
+  </form>
+</div>
+
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <svg class="logo-mark" viewBox="0 0 40 40" aria-hidden="true"><rect x="6" y="6" width="20" height="20" rx="5" transform="rotate(45 16 16)" fill="#253591"/><rect x="14" y="14" width="18" height="18" rx="5" transform="rotate(45 23 23)" fill="#9bd21c" opacity=".9"/></svg>
+      <div><b>JSR Corsec</b><span>Intern Hub</span></div>
+    </div>
+    <nav class="nav" id="sideNav"></nav>
+    <div class="help-card">
+      <svg class="ill" viewBox="0 0 120 74" aria-hidden="true">
+        <circle cx="60" cy="40" r="34" fill="#DCE0F3"/>
+        <circle cx="38" cy="30" r="9" fill="#F2C9A5"/><path d="M27 31c0-9 5-14 11-14s11 5 11 14c0 6-2 11-2 11H29s-2-5-2-11z" fill="#9bd21c"/><circle cx="38" cy="31" r="7.5" fill="#F2C9A5"/>
+        <path d="M22 74c0-15 7-24 16-24s16 9 16 24z" fill="#253591"/>
+        <circle cx="82" cy="28" r="8" fill="#E7B48C"/><path d="M74 26c0-6 4-9 8-9s8 3 8 8c-2-3-6-4-8-4s-6 2-8 5z" fill="#1A1E3A"/>
+        <path d="M66 74c0-15 7-24 16-24s16 9 16 24z" fill="#9bd21c"/>
+        <rect x="50" y="8" width="20" height="14" rx="5" fill="#fff"/><path d="M56 22l-2 5 6-5z" fill="#fff"/><circle cx="55" cy="15" r="1.4" fill="#253591"/><circle cx="60" cy="15" r="1.4" fill="#253591"/><circle cx="65" cy="15" r="1.4" fill="#253591"/>
+      </svg>
+      <b>Butuh bantuan?</b>
+      <span>Hubungi tim Sekretaris Perusahaan</span>
+      <a class="btn btn-primary btn-sm" style="width:100%" href="mailto:sekper@jamkrindosyariah.co.id">Kirim email</a>
+    </div>
+  </aside>
+
+  <main>
+    <!-- ============ TOPBAR ============ -->
+    <header class="topbar">
+      <h1 id="pageTitle">Dashboard</h1>
+      <div class="top-actions">
+        <div class="search">
+          <span id="searchIco"></span>
+          <input id="searchInput" type="search" placeholder="Cari tugas, link, menu…" aria-label="Cari">
+          <div class="dropdown" id="searchDd"></div>
+        </div>
+        <a class="icon-btn" href="https://outlook.office.com/mail/" target="_blank" rel="noopener" title="Buka Outlook" id="mailBtn"></a>
+        <div style="position:relative">
+          <button class="icon-btn" id="bellBtn" title="Notifikasi" aria-label="Notifikasi"></button>
+          <div class="dropdown" id="bellDd"></div>
+        </div>
+        <div style="position:relative">
+          <button class="profile" id="profileBtn" aria-label="Profil">
+            <div class="avatar" id="avatar">M</div>
+            <div class="meta"><b id="pfName">Magang</b><small id="pfRole">Intern Corsec</small></div>
+            <span id="pfChev"></span>
+          </button>
+          <div class="dropdown" id="profileDd" style="width:220px"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ============ DASHBOARD ============ -->
+    <section class="page" id="page-dashboard">
+      <div class="grid-2">
+        <div class="col">
+          <div class="hero">
+            <div class="hero-text">
+              <h2 id="heroGreet">Halo!</h2>
+              <p id="heroMsg"></p>
+              <div class="intern-progress" id="internProg"></div>
+              <a href="#" class="hero-link" data-go="tasks">Lihat tugas hari ini →</a>
+            </div>
+            <svg class="hero-ill" viewBox="0 0 250 212" aria-hidden="true">
+              <circle cx="170" cy="96" r="78" fill="#fff" opacity=".06"/>
+              <circle cx="214" cy="40" r="6" fill="#9bd21c"/>
+              <circle cx="40" cy="60" r="4" fill="#9bd21c" opacity=".7"/>
+              <path d="M30 30l6 6M36 30l-6 6" stroke="#fff" stroke-width="2" opacity=".5" stroke-linecap="round"/>
+              <!-- body -->
+              <path d="M112 212c0-50 18-78 54-78s54 28 54 78z" fill="#fff"/>
+              <path d="M150 134c4 10 10 16 16 16s12-6 16-16" fill="none" stroke="#DCE0F3" stroke-width="3"/>
+              <!-- hijab -->
+              <path d="M166 36c-28 0-40 22-38 48 2 22 6 40 14 54 7 6 17 9 24 9s17-3 24-9c8-14 12-32 14-54 2-26-10-48-38-48z" fill="#9bd21c"/>
+              <path d="M136 120c8 12 18 18 30 18s22-6 30-18l6 16c-10 10-22 16-36 16s-26-6-36-16z" fill="#8ac012"/>
+              <!-- face -->
+              <ellipse cx="166" cy="86" rx="22" ry="26" fill="#F2C9A5"/>
+              <path d="M155 84q4 3 8 0M171 84q4 3 8 0" stroke="#1A1E3A" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <path d="M160 98q6 5 12 0" stroke="#C0705A" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <circle cx="153" cy="93" r="3.5" fill="#F0A894" opacity=".6"/><circle cx="180" cy="93" r="3.5" fill="#F0A894" opacity=".6"/>
+              <!-- arm -->
+              <path d="M126 168c-10 4-24 2-34-6l6-10c10 6 20 6 28 2z" fill="#fff"/>
+              <!-- laptop -->
+              <path d="M44 118l66-10 8 48-66 10z" fill="#DCE0F3"/>
+              <path d="M52 166l66-10 14 4-66 10z" fill="#B9C0E6"/>
+              <circle cx="82" cy="138" r="5" fill="#fff" opacity=".8"/>
+              <circle cx="97" cy="157" r="7" fill="#F2C9A5"/>
+            </svg>
+          </div>
+
+          <div class="card">
+            <div class="card-h">
+              <h2>Absensi Hari Ini</h2>
+              <span id="attPill"></span>
+            </div>
+            <div class="att">
+              <div>
+                <div class="att-clock" id="clock">--:--<small>:--</small></div>
+                <div class="att-date" id="clockDate"></div>
+                <div class="att-times">
+                  <div><small>Jam masuk</small><b id="tIn">--:--</b></div>
+                  <div><small>Jam pulang</small><b id="tOut">--:--</b></div>
+                  <div><small>Durasi</small><b id="tDur">-</b></div>
+                </div>
+              </div>
+              <div class="att-actions">
+                <div class="seg" id="modeSeg" role="radiogroup" aria-label="Lokasi kerja">
+                  <button data-mode="WFO" class="on">WFO</button>
+                  <button data-mode="WFH">WFH</button>
+                  <button data-mode="Dinas Luar">Dinas Luar</button>
+                </div>
+                <button class="big-btn in" id="attBtn"></button>
+                <div class="hint" id="attHint" style="text-align:center"></div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="sec-h"><h2>Tugas rutin hari ini</h2><a href="#" class="link" data-go="tasks">lihat semua</a></div>
+            <div class="stat-grid" id="statGrid"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-h">
+              <h2>Riwayat Absensi</h2>
+              <button class="btn btn-primary btn-sm" id="allAttBtn">Lihat semua</button>
+            </div>
+            <div class="table-wrap"><table id="attTable"></table></div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="card" id="miniCal"></div>
+          <div class="card">
+            <div class="card-h"><h2>Quick Links</h2><a href="#" class="link" data-go="settings">atur link</a></div>
+            <div class="ql" id="quickLinks"></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h2>Agenda Mendatang</h2><a href="#" class="link" data-go="calendar">kalender</a></div>
+            <div id="upcoming"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MY TASKS ============ -->
+    <section class="page" id="page-tasks">
+      <div class="grid-2">
+        <div class="col">
+          <div>
+            <div class="sec-h"><h2>Tugas Rutin Harian</h2><span class="muted" id="taskDate" style="font-size:12.5px"></span></div>
+            <div class="task-list" id="taskList"></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h2>Tugas Tambahan</h2><span class="muted" style="font-size:12px" id="todoCount"></span></div>
+            <form class="todo-form" id="todoForm">
+              <input class="input" type="text" id="todoText" placeholder="Contoh: Siapkan bahan rapat Direksi" required>
+              <input class="input" type="date" id="todoDue" aria-label="Tenggat">
+              <select class="input" id="todoPrio" aria-label="Prioritas"><option value="normal">Normal</option><option value="tinggi">Prioritas tinggi</option><option value="rendah">Rendah</option></select>
+              <button class="btn btn-primary" type="submit" id="todoAddBtn">Tambah</button>
+            </form>
+            <div id="todoList"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card" style="text-align:center">
+            <div class="card-h" style="justify-content:center"><h2>Progres Hari Ini</h2></div>
+            <div id="bigRing"></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h2>7 Hari Terakhir</h2></div>
+            <div id="weekChart"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ONBOARDING / ABOUT ============ -->
+    <section class="page" id="page-onboarding">
+      <div class="grid-2">
+        <div class="col">
+          <div class="about-hero">
+            <span class="eyebrow">ABOUT JAMKRINDO SYARIAH</span>
+            <h2>PT Penjaminan Jamkrindo Syariah — perusahaan penjaminan syariah dari Grup Jamkrindo</h2>
+            <p>Jamkrindo Syariah (Jamsyar) menjalankan usaha penjaminan (kafalah) berdasarkan prinsip syariah: menjamin pembiayaan dan kewajiban nasabah kepada bank, lembaga keuangan syariah, maupun pemilik proyek, sehingga pelaku usaha lebih mudah mendapat akses pembiayaan.</p>
+          </div>
+
+          <div class="facts">
+            <div class="card fact"><small>Berdiri</small><b>19 Sep 2014</b><span>Akta Notaris No. 68</span></div>
+            <div class="card fact"><small>Izin operasional OJK</small><b>7 Nov 2014</b><span>KEP-134/D.05/2014</span></div>
+            <div class="card fact"><small>Pemegang saham</small><b>PT Jamkrindo</b><span>99,93% · Koperasi Warga Jamkrindo Sejahtera 0,07%</span></div>
+            <div class="card fact"><small>Jaringan kantor</small><b>18 kantor</b><span>1 KP · 1 KCK · 14 KC · 2 KUP</span></div>
+          </div>
+
+          <div class="card">
+            <div class="vm">
+              <div>
+                <div class="sec-h"><h2>Visi</h2></div>
+                <p class="vision">“Menjadi Perusahaan Penjaminan Syariah Terpercaya dan Terdepan dalam Pertumbuhan Bisnis di Indonesia”</p>
+              </div>
+              <div>
+                <div class="sec-h"><h2>Misi</h2></div>
+                <div class="missions">
+                  <div><i>1</i><span><b>Amanah 1</b> — Melakukan kegiatan penjaminan syariah bagi pengembangan entitas bisnis berbasis syariah di Indonesia.</span></div>
+                  <div><i>2</i><span><b>Amanah 2</b> — Memberikan layanan yang luas dan berkualitas tinggi.</span></div>
+                  <div><i>3</i><span><b>Amanah 3</b> — Memberikan manfaat kepada stakeholder sesuai prinsip bisnis yang sehat dan berlandaskan syariah.</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-h"><h2>Nilai Perusahaan · AKHLAK</h2></div>
+            <div class="values">
+              <div class="value"><div class="letter">A</div><b>Amanah</b><small>Memegang teguh kepercayaan yang diberikan</small></div>
+              <div class="value"><div class="letter">K</div><b>Kompeten</b><small>Terus belajar dan mengembangkan kapabilitas</small></div>
+              <div class="value"><div class="letter">H</div><b>Harmonis</b><small>Saling peduli dan menghargai perbedaan</small></div>
+              <div class="value"><div class="letter">L</div><b>Loyal</b><small>Berdedikasi, mengutamakan kepentingan Bangsa dan Negara</small></div>
+              <div class="value"><div class="letter">A</div><b>Adaptif</b><small>Terus berinovasi dan antusias menghadapi perubahan</small></div>
+              <div class="value"><div class="letter">K</div><b>Kolaboratif</b><small>Membangun kerja sama yang sinergis</small></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-h" style="flex-wrap:wrap"><h2>Produk Kami</h2>
+              <div class="chips" id="prodChips">
+                <button class="chip on" data-f="all">Semua</button>
+                <button class="chip" data-f="pembiayaan">Kafalah Pembiayaan</button>
+                <button class="chip" data-f="surety">Suretyship &amp; Garansi</button>
+              </div>
+            </div>
+            <div class="products" id="products"></div>
+            <p class="src">Nama produk sesuai menu “Produk Kami” di jamkrindosyariah.co.id. Deskripsi berupa ringkasan umum — rincian ketentuan mengikuti dokumen resmi produk.</p>
+          </div>
+
+          <div class="card">
+            <div class="card-h"><h2>Peran Sekretaris Perusahaan</h2></div>
+            <div class="roles" id="roles"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-h"><h2>Istilah yang Sering Dipakai</h2></div>
+            <div class="gloss" id="gloss"></div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="card">
+            <div class="card-h"><h2>Checklist Onboarding</h2><span id="obPct" class="pill info">0%</span></div>
+            <div id="obList"></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h2>Bagian dari Grup</h2></div>
+            <div class="tree">
+              <div class="node"><b>PT Jaminan Kredit Indonesia (Persero)</b><small>Jamkrindo · BUMN penjaminan, anggota Holding Indonesia Financial Group (IFG)</small></div>
+              <div class="vline"></div>
+              <div class="node main"><b>PT Penjaminan Jamkrindo Syariah</b><small>Anak perusahaan BUMN · kepemilikan 99,93%</small></div>
+              <div class="vline"></div>
+              <div class="node unit"><b>Sekretaris Perusahaan</b><small>Tempat kamu magang 👋</small></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h2>Kantor Pusat</h2></div>
+            <div class="contact">
+              <div><span data-ic="building"></span><span>Gedung Jamkrindo Syariah<br>Jl. Letjen Suprapto No. 20, Cempaka Putih Timur, Jakarta Pusat 10510</span></div>
+              <div><span data-ic="phone"></span><span>(021) 212-42777</span></div>
+              <div><span data-ic="mail"></span><span>info@jamkrindosyariah.co.id</span></div>
+              <div><span data-ic="globe"></span><a class="link" href="https://www.jamkrindosyariah.co.id" target="_blank" rel="noopener">jamkrindosyariah.co.id</a></div>
+            </div>
+            <p class="src" style="margin-top:14px">Sumber: jamkrindosyariah.co.id (profil &amp; sejarah perusahaan), diakses November 2026.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CALENDAR ============ -->
+    <section class="page" id="page-calendar">
+      <div class="grid-2">
+        <div class="card bigcal" id="bigCal"></div>
+        <div class="col">
+          <div class="card">
+            <div class="card-h"><h2 id="selDateTitle">Agenda</h2></div>
+            <div id="selAtt" style="margin-bottom:12px"></div>
+            <div id="selAgenda"></div>
+          </div>
+          <div class="card">
+            <div class="card-h"><h2>Tambah Agenda</h2></div>
+            <form class="form-grid" id="evForm">
+              <div class="field full"><label for="evTitle">Judul</label><input class="input" id="evTitle" placeholder="Rapat Direksi / Deadline laporan" required></div>
+              <div class="field"><label for="evDate">Tanggal</label><input class="input" type="date" id="evDate" required></div>
+              <div class="field"><label for="evTime">Jam</label><input class="input" type="time" id="evTime"></div>
+              <div class="field full"><label for="evCat">Kategori</label>
+                <select class="input" id="evCat"><option value="rapat">Rapat</option><option value="deadline">Deadline</option><option value="acara">Acara perusahaan</option><option value="libur">Libur / Cuti</option><option value="lain">Lainnya</option></select>
+              </div>
+              <button class="btn btn-primary full" type="submit">Simpan agenda</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SETTINGS ============ -->
+    <section class="page" id="page-settings">
+      <div class="set-grid">
+        <div class="card">
+          <div class="card-h"><h2>Profil Magang</h2></div>
+          <form class="form-grid" id="profileForm">
+            <div class="field full"><label for="sName">Nama lengkap</label><input class="input" id="sName" required></div>
+            <div class="field full"><label for="sRole">Posisi</label><input class="input" id="sRole"></div>
+            <div class="field"><label for="sStart">Mulai magang</label><input class="input" type="date" id="sStart"></div>
+            <div class="field"><label for="sEnd">Selesai magang</label><input class="input" type="date" id="sEnd"></div>
+            <div class="field"><label for="sIn">Jam masuk</label><input class="input" type="time" id="sIn"></div>
+            <div class="field"><label for="sOut">Jam pulang</label><input class="input" type="time" id="sOut"></div>
+            <div class="field full"><label for="sPin">PIN akses (4–8 digit, kosongkan untuk mematikan kunci)</label><input class="input" id="sPin" inputmode="numeric" maxlength="8" type="password"></div>
+            <button class="btn btn-primary full" type="submit">Simpan profil</button>
+          </form>
+        </div>
+        <div class="card">
+          <div class="card-h"><h2>Link Aplikasi &amp; Spreadsheet</h2></div>
+          <form class="form-grid" id="linkForm"></form>
+        </div>
+        <div class="card">
+          <div class="card-h"><h2>Data &amp; Cadangan</h2></div>
+          <p class="hint" style="margin-bottom:14px">Data (absensi, tugas, agenda) tersimpan di browser perangkat ini. Unduh cadangan secara berkala, terutama sebelum ganti perangkat atau membersihkan cache browser.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-ghost" id="exportBtn"></button>
+            <label class="btn btn-line" style="cursor:pointer"><span id="importIco"></span>Pulihkan cadangan<input type="file" id="importFile" accept="application/json" hidden></label>
+            <button class="btn btn-line" id="csvBtn"></button>
+            <button class="btn btn-danger" id="resetBtn">Hapus semua data</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<nav class="bottom-nav" id="bottomNav"></nav>
+<div class="overlay" id="overlay"><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
+<div id="toast"></div>
+
+<script>
+/* =========================================================
+   KONFIGURASI DEFAULT — bisa juga diubah dari menu Pengaturan
+   ========================================================= */
+const DEFAULTS = {
+  name: 'Nama Peserta Magang',
+  role: 'Intern · Sekretaris Perusahaan',
+  start: '', end: '',
+  jamMasuk: '08:00', jamPulang: '17:00',
+  pin: '1234',
+  links: {
+    dio: 'https://dio.jamkrindosyariah.co.id',
+    suratKeluar: '',   // link Excel Online "Register Nomor Surat Keluar"
+    pegawai: '',       // link Excel Online "Dashboard Data Pegawai / Cuti"
+    outlook: 'https://outlook.office.com/mail/',
+    teams: 'https://teams.microsoft.com',
+    web: 'https://www.jamkrindosyariah.co.id'
+  }
+};
+
+const LINKS_META = [
+  {key:'dio',         label:'Digital Office (DIO)',             sub:'Input & disposisi surat masuk', icon:'grid',  color:'c-blue'},
+  {key:'suratKeluar', label:'Register Nomor Surat Keluar',       sub:'Excel Online · permintaan nomor', icon:'send', color:'c-green'},
+  {key:'pegawai',     label:'Dashboard Data Pegawai & Cuti',     sub:'Excel Online · status, jabatan, cuti', icon:'users', color:'c-amber'},
+  {key:'outlook',     label:'Email Outlook',                     sub:'Microsoft 365 mail', icon:'mail', color:'c-sky'},
+  {key:'teams',       label:'Microsoft Teams',                   sub:'Chat & rapat online', icon:'chat', color:'c-violet'},
+  {key:'web',         label:'Website Jamkrindo Syariah',         sub:'jamkrindosyariah.co.id', icon:'globe', color:'c-rose'}
+];
+
+const TASKS = [
+  {
+    id:'t1', icon:'inbox', color:'c-blue', ring:'#253591', linkKey:'dio', linkLabel:'Buka Digital Office',
+    title:'Penginputan Surat Masuk PT Jamkrindo Syariah',
+    short:'Registrasi surat masuk ke Digital Office (DIO) dan teruskan untuk disposisi.',
+    unit:'surat diinput',
+    steps:[
+      'Terima surat masuk (fisik maupun email). Periksa kelengkapan: kop, nomor, tanggal, perihal, dan lampiran.',
+      'Pindai (scan) surat beserta lampirannya ke PDF. Beri nama file: <b>TanggalSurat_Pengirim_Perihal</b>.',
+      'Buka <b>dio.jamkrindosyariah.co.id</b> lalu login dengan akun yang diberikan pembimbing.',
+      'Masuk ke menu <b>Surat Masuk</b> → pilih tambah/registrasi surat baru.',
+      'Isi data: nomor surat, tanggal surat, tanggal diterima, pengirim/instansi, perihal, dan sifat surat. Unggah file PDF.',
+      'Pilih tujuan disposisi (Direksi/divisi terkait) sesuai arahan, lalu simpan/kirim.',
+      'Arsipkan surat fisik sesuai tata arsip Sekretaris Perusahaan.'
+    ],
+    tip:'Nama menu di DIO bisa sedikit berbeda. Jika ragu soal tujuan disposisi, tanyakan pembimbing sebelum mengirim.'
+  },
+  {
+    id:'t2', icon:'send', color:'c-green', ring:'#9bd21c', linkKey:'suratKeluar', linkLabel:'Buka Excel Surat Keluar',
+    title:'Penarikan Nomor Surat Keluar PT Jamkrindo Syariah',
+    short:'Berikan nomor surat keluar sesuai permintaan yang masuk di Excel Online.',
+    unit:'nomor diberikan',
+    steps:[
+      'Buka file <b>Register Nomor Surat Keluar</b> di Excel Online (tombol Buka link).',
+      'Cek baris permintaan terbaru yang masuk otomatis: nama pemohon, unit kerja, perihal, tujuan surat, dan jenis surat.',
+      'Ambil nomor urut berikutnya. Jangan sampai ada nomor yang terlewat atau dobel.',
+      'Susun nomor sesuai format/kode klasifikasi surat yang berlaku di perusahaan.',
+      'Isi kolom nomor surat, tanggal, dan ubah status menjadi <b>Sudah diberikan</b>. Excel Online menyimpan otomatis.',
+      'Informasikan nomor surat ke pemohon (email/Teams) bila diperlukan.'
+    ],
+    tip:'Jangan menghapus baris. Jika nomor batal dipakai, tandai “BATAL” agar urutan nomor tetap rapi dan dapat ditelusuri.'
+  },
+  {
+    id:'t3', icon:'users', color:'c-amber', ring:'#F2A33A', linkKey:'pegawai', linkLabel:'Buka Dashboard Pegawai',
+    title:'Penyesuaian Status Cuti, Jabatan & Status Pegawai',
+    short:'Perbarui data cuti, jabatan, unit, dan status kepegawaian di dashboard Excel Online.',
+    unit:'data diperbarui',
+    steps:[
+      'Kumpulkan dokumen dasar perubahan: SK, nota dinas, atau persetujuan cuti.',
+      'Buka <b>Dashboard Data Pegawai</b> di Excel Online (tombol Buka link).',
+      'Cari pegawai dengan <b>Ctrl + F</b> menggunakan nama atau NIP.',
+      'Perbarui kolom yang relevan: status cuti (jenis, tanggal mulai–selesai), jabatan, unit kerja, atau status kepegawaian.',
+      'Isi kolom keterangan dengan nomor dokumen dasar dan tanggal pembaruan.',
+      'Periksa ulang, lalu laporkan ke pembimbing jika menemukan data yang tidak sesuai.'
+    ],
+    tip:'Data pegawai bersifat rahasia. Jangan mengunduh, memotret, atau membagikannya di luar keperluan pekerjaan.'
+  }
+];
+
+const PRODUCTS = [
+  {n:'Kafalah Kredit Usaha Rakyat (KUR)', c:'pembiayaan', d:'Penjaminan atas pembiayaan KUR Syariah bagi pelaku UMKM yang layak usaha namun belum memiliki agunan memadai.'},
+  {n:'Kafalah Pembiayaan Umum', c:'pembiayaan', d:'Penjaminan pembiayaan modal kerja dan/atau investasi bagi perorangan, perusahaan, atau koperasi.'},
+  {n:'Kafalah Pembiayaan Sejahtera FLPP', c:'pembiayaan', d:'Penjaminan pembiayaan pemilikan rumah bersubsidi dengan skema Fasilitas Likuiditas Pembiayaan Perumahan.'},
+  {n:'Kafalah Supply Chain Financing', c:'pembiayaan', d:'Penjaminan pembiayaan rantai pasok antara pemasok/distributor dengan perusahaan inti.'},
+  {n:'Kafalah Pembiayaan Multiguna', c:'pembiayaan', d:'Penjaminan pembiayaan multiguna untuk berbagai kebutuhan nasabah.'},
+  {n:'Kafalah Pembiayaan Mikro', c:'pembiayaan', d:'Penjaminan pembiayaan berskala mikro untuk usaha kecil yang produktif.'},
+  {n:'Kafalah Pembiayaan Konstruksi Pengadaan Barang & Jasa', c:'pembiayaan', d:'Penjaminan pembiayaan untuk pelaksanaan proyek konstruksi serta pengadaan barang dan jasa.'},
+  {n:'Kafalah Pembiayaan Distribusi Barang', c:'pembiayaan', d:'Penjaminan pembiayaan modal kerja untuk kegiatan distribusi barang.'},
+  {n:'Kontra Bank Garansi', c:'surety', d:'Jaminan balik (counter guarantee) kepada bank syariah yang menerbitkan bank garansi bagi nasabahnya.'},
+  {n:'Surety Bond', c:'surety', d:'Jaminan bahwa pihak terjamin (mis. kontraktor) memenuhi kewajibannya kepada pemilik proyek: penawaran, pelaksanaan, uang muka, pemeliharaan.'},
+  {n:'Customs Bond', c:'surety', d:'Jaminan kepada Direktorat Jenderal Bea dan Cukai atas kewajiban pembayaran bea masuk, cukai, dan pungutan lainnya.'}
+];
+
+const ROLES = [
+  {i:'inbox', c:'c-blue', t:'Tata kelola persuratan', d:'Registrasi surat masuk/keluar, penomoran, dan kearsipan.'},
+  {i:'users', c:'c-green', t:'Kesekretariatan Direksi & Dekom', d:'Agenda rapat, undangan, notulen, dan tindak lanjut.'},
+  {i:'globe', c:'c-sky', t:'Komunikasi korporat', d:'Publikasi, media sosial, website, dan hubungan media.'},
+  {i:'shield', c:'c-violet', t:'Tata kelola perusahaan (GCG)', d:'Keterbukaan informasi dan hubungan dengan pemegang saham & regulator.'}
+];
+
+const GLOSS = [
+  ['Kafalah','Akad penjaminan: pihak penjamin menanggung kewajiban pihak terjamin kepada penerima jaminan.'],
+  ['Kafil','Pihak penjamin — dalam hal ini Jamkrindo Syariah.'],
+  ['Makful ‘anhu','Pihak terjamin, mis. nasabah pembiayaan atau kontraktor.'],
+  ['Makful lahu','Penerima jaminan, mis. bank syariah atau pemilik proyek (obligee).'],
+  ['IJK','Imbal Jasa Kafalah — fee yang diterima penjamin atas penjaminan.'],
+  ['Sertifikat Kafalah','Dokumen bukti penjaminan yang diterbitkan perusahaan.'],
+  ['DIO','Digital Office — aplikasi persuratan & disposisi internal.'],
+  ['Disposisi','Instruksi tindak lanjut atas surat masuk dari pimpinan ke unit terkait.'],
+  ['Nota Dinas','Surat internal antar unit/pejabat di dalam perusahaan.'],
+  ['DPS','Dewan Pengawas Syariah — mengawasi kesesuaian kegiatan usaha dengan prinsip syariah.']
+];
+
+const ONBOARD = [
+  'Perkenalan dengan tim Sekretaris Perusahaan & pembimbing',
+  'Aktivasi akun email & Microsoft 365',
+  'Mendapat akses Digital Office (DIO)',
+  'Mendapat akses Excel Register Nomor Surat Keluar',
+  'Mendapat akses Dashboard Data Pegawai & Cuti',
+  'Memasukkan semua link di menu Pengaturan',
+  'Membaca profil perusahaan di halaman ini',
+  'Memahami alur surat masuk → disposisi → arsip',
+  'Memahami aturan kerahasiaan data & dokumen'
+];
+
+const EV_CAT = {
+  rapat:{l:'Rapat', bg:'#EEF0FA', fg:'#253591'},
+  deadline:{l:'Deadline', bg:'#FDECEC', fg:'#C0353A'},
+  acara:{l:'Acara', bg:'#F2F9E0', fg:'#4E7300'},
+  libur:{l:'Libur/Cuti', bg:'#FEF4E6', fg:'#A86100'},
+  lain:{l:'Lainnya', bg:'#F1ECFD', fg:'#6A3FC8'}
+};
+
+/* ---------------- Icons ---------------- */
+const I = {
+  home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/>',
+  tasks:'<rect x="3" y="3" width="18" height="18" rx="4"/><path d="m8 12 3 3 5-6"/>',
+  book:'<path d="M2 4h7a3 3 0 0 1 3 3v14a2 2 0 0 0-2-2H2z"/><path d="M22 4h-7a3 3 0 0 0-3 3v14a2 2 0 0 1 2-2h8z"/>',
+  cal:'<rect x="3" y="4.5" width="18" height="17" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/>',
+  sliders:'<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
+  search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  bell:'<path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10 21a2 2 0 0 0 4 0"/>',
+  mail:'<rect x="2.5" y="4.5" width="19" height="15" rx="2.5"/><path d="m3 7 9 6 9-6"/>',
+  info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.5v.5"/>',
+  ext:'<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  login:'<path d="M10 17l5-5-5-5M15 12H3"/><path d="M14 3h5a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-5"/>',
+  logout:'<path d="M15 17l5-5-5-5M20 12H8"/><path d="M10 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5"/>',
+  inbox:'<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13l3.5 7v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z"/>',
+  send:'<path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+  chat:'<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-5A8 8 0 1 1 21 12z"/>',
+  grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>', minus:'<path d="M5 12h14"/>',
+  trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+  chevL:'<path d="m15 18-6-6 6-6"/>', chevR:'<path d="m9 18 6-6-6-6"/>', chevD:'<path d="m6 9 6 6 6-6"/>',
+  lock:'<rect x="4" y="11" width="16" height="10" rx="2.5"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  download:'<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>', upload:'<path d="M12 21V9M7 14l5-5 5 5M4 3h16"/>',
+  x:'<path d="M18 6 6 18M6 6l12 12"/>', check:'<path d="m5 12 5 5 9-10"/>',
+  shield:'<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
+  phone:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+  building:'<rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M9 7h1M14 7h1M9 11h1M14 11h1M9 15h1M14 15h1M10 21v-3h4v3"/>',
+  file:'<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/>',
+  bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>'
+};
+const ic = (n, cls='') => `<svg class="ic ${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${I[n]||''}</svg>`;
+
+/* ---------------- Storage (aman bila diblokir) ---------------- */
+const LS_KEY = 'jsr-corsec-intern-hub-v1';
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); return true; }catch(e){ return false; } }
+function ssGet(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } }
+function ssSet(k,v){ try{ sessionStorage.setItem(k,v); }catch(e){} }
+
+function freshState(){ return { settings: JSON.parse(JSON.stringify(DEFAULTS)), attendance:{}, daily:{}, todos:[], events:[], onboarding:{}, mode:'WFO' }; }
+function loadState(){
+  const s = freshState();
+  try{
+    const raw = lsGet(LS_KEY); if(!raw) return s;
+    const d = JSON.parse(raw);
+    Object.assign(s, d);
+    s.settings = Object.assign({}, DEFAULTS, d.settings||{});
+    s.settings.links = Object.assign({}, DEFAULTS.links, (d.settings||{}).links||{});
+  }catch(e){}
+  return s;
+}
+let S = loadState();
+const save = () => lsSet(LS_KEY, JSON.stringify(S));
+
+/* ---------------- Helpers ---------------- */
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const pad = n => String(n).padStart(2,'0');
+const dk = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const parseDk = s => { const [y,m,d] = s.split('-').map(Number); return new Date(y,m-1,d); };
+const today = () => dk(new Date());
+const hm = d => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+const toMin = s => { const [h,m] = s.split(':').map(Number); return h*60+m; };
+const esc = s => String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmtLong = d => d.toLocaleDateString('id-ID',{weekday:'long', day:'numeric', month:'long', year:'numeric'});
+const fmtShort = d => d.toLocaleDateString('id-ID',{weekday:'short', day:'numeric', month:'short'});
+const fmtMonth = d => d.toLocaleDateString('id-ID',{month:'long', year:'numeric'});
+const durStr = mins => mins<0 ? '-' : `${Math.floor(mins/60)}j ${pad(mins%60)}m`;
+const uid = () => Math.random().toString(36).slice(2,9);
+const firstName = () => (S.settings.name||'').trim().split(/\s+/)[0] || 'Magang';
+const initials = () => (S.settings.name||'M').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+
+function dayData(key=today()){
+  if(!S.daily[key]) S.daily[key] = {};
+  TASKS.forEach(t => { if(!S.daily[key][t.id]) S.daily[key][t.id] = {count:0, done:false}; });
+  return S.daily[key];
+}
+function doneCount(key=today()){ const d = S.daily[key]; return d ? TASKS.filter(t => d[t.id] && d[t.id].done).length : 0; }
+
+function toast(msg, icon='check'){
+  const t = $('#toast'); t.innerHTML = ic(icon) + `<span>${msg}</span>`; t.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(()=>t.classList.remove('show'), 2600);
+}
+function ring(pct, color, inner, size=48, stroke=5){
+  const r = (size-stroke)/2, c = 2*Math.PI*r, off = c*(1-pct/100);
+  return `<div class="ring" style="width:${size}px;height:${size}px"><svg viewBox="0 0 ${size} ${size}" style="width:${size}px;height:${size}px"><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="#EEF0F6" stroke-width="${stroke}"/><circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}" style="transition:stroke-dashoffset .5s"/></svg><span>${inner}</span></div>`;
+}
+
+/* ---------------- Modal ---------------- */
+function openModal(html){ $('#modal').style.maxWidth = ''; $('#modal').innerHTML = html; $('#overlay').classList.add('open'); }
+function closeModal(){ $('#overlay').classList.remove('open'); }
+$('#overlay').addEventListener('click', e => { if(e.target.id==='overlay' || e.target.closest('[data-close]')) closeModal(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape'){ closeModal(); $$('.dropdown').forEach(d=>d.classList.remove('open')); } });
+function confirmBox(title, msg, okLabel, onOk, danger=false){
+  openModal(`<div class="modal-h"><div><h3>${title}</h3><p>${msg}</p></div></div>
+    <div class="modal-f"><button class="btn btn-line" data-close>Batal</button><button class="btn ${danger?'btn-danger':'btn-primary'}" id="cfOk">${okLabel}</button></div>`);
+  $('#cfOk').onclick = () => { closeModal(); onOk(); };
+}
+
+/* ---------------- Links ---------------- */
+function openLink(key){
+  const url = (S.settings.links[key]||'').trim();
+  const meta = LINKS_META.find(l=>l.key===key);
+  if(!url){
+    openModal(`<div class="modal-h"><div class="ql-ico c-amber">${ic('info')}</div><div><h3>Link belum diatur</h3><p>Link “${esc(meta?meta.label:key)}” belum diisi. Tempel link Excel Online / aplikasinya di menu Pengaturan agar tombol ini langsung membuka file.</p></div></div>
+    <div class="modal-f"><button class="btn btn-line" data-close>Nanti</button><button class="btn btn-primary" id="goSet">Atur sekarang</button></div>`);
+    $('#goSet').onclick = () => { closeModal(); go('settings'); setTimeout(()=>{ const f = $('#lk_'+key); if(f){ f.focus(); f.scrollIntoView({block:'center'}); } }, 80); };
+    return;
+  }
+  window.open(url, '_blank', 'noopener');
+}
+
+/* ---------------- Navigation ---------------- */
+const PAGES = [
+  {id:'dashboard', label:'Dashboard', icon:'home', title:'Dashboard'},
+  {id:'tasks', label:'My Tasks', icon:'tasks', title:'My Tasks'},
+  {id:'onboarding', label:'Onboarding', icon:'book', title:'About Jamkrindo Syariah'},
+  {id:'calendar', label:'Calendar', icon:'cal', title:'Calendar'},
+  {id:'settings', label:'Pengaturan', icon:'sliders', title:'Pengaturan'}
+];
+let current = 'dashboard';
+function buildNav(){
+  const pending = TASKS.length - doneCount();
+  $('#sideNav').innerHTML = PAGES.map(p => `<button data-page="${p.id}" class="${p.id===current?'active':''}">${ic(p.icon)}<span>${p.label}</span>${p.id==='tasks' && pending>0 ? `<span class="badge">${pending}</span>`:''}</button>`).join('');
+  $('#bottomNav').innerHTML = PAGES.map(p => `<button data-page="${p.id}" class="${p.id===current?'active':''}">${ic(p.icon)}<span>${p.label}</span></button>`).join('');
+}
+function go(id){
+  current = id;
+  $$('.page').forEach(p => p.classList.toggle('active', p.id==='page-'+id));
+  $('#pageTitle').textContent = PAGES.find(p=>p.id===id).title;
+  buildNav(); renderPage(id);
+  window.scrollTo({top:0});
+  try{ history.replaceState(null,'','#'+id); }catch(e){}
+}
+document.addEventListener('click', e => {
+  const nb = e.target.closest('[data-page]'); if(nb){ go(nb.dataset.page); return; }
+  const g = e.target.closest('[data-go]'); if(g){ e.preventDefault(); go(g.dataset.go); return; }
+  const l = e.target.closest('[data-link]'); if(l){ e.preventDefault(); openLink(l.dataset.link); return; }
+  const inf = e.target.closest('[data-info]'); if(inf){ showTutorial(inf.dataset.info); return; }
+  if(!e.target.closest('.dropdown') && !e.target.closest('#bellBtn') && !e.target.closest('#profileBtn') && !e.target.closest('.search')) $$('.dropdown').forEach(d=>d.classList.remove('open'));
+});
+function renderPage(id){
+  if(id==='dashboard') renderDashboard();
+  if(id==='tasks') renderTasks();
+  if(id==='onboarding') renderOnboarding();
+  if(id==='calendar') renderBigCal();
+  if(id==='settings') renderSettings();
+  renderTop();
+}
+
+/* ---------------- Topbar ---------------- */
+function renderTop(){
+  $('#avatar').textContent = initials();
+  $('#pfName').textContent = firstName();
+  $('#pfRole').textContent = 'Intern Corsec';
+  const n = notifications().length;
+  $('#bellBtn').innerHTML = ic('bell') + (n ? '<span class="dot"></span>' : '');
+}
+function notifications(){
+  const list = [], t = today(), now = new Date();
+  const wd = now.getDay();
+  if(wd!==0 && wd!==6 && !(S.attendance[t]&&S.attendance[t].in)) list.push({i:'login', c:'c-blue', t:'Belum check-in hari ini', s:'Klik untuk absen masuk', go:'dashboard'});
+  const d = dayData();
+  TASKS.forEach(x => { if(!d[x.id].done) list.push({i:x.icon, c:x.color, t:x.title.replace(' PT Jamkrindo Syariah',''), s:'Tugas rutin belum ditandai selesai', go:'tasks'}); });
+  S.todos.filter(x => !x.done && x.due && x.due<=t).forEach(x => list.push({i:'file', c:'c-rose', t:x.text, s: x.due<t ? 'Lewat tenggat' : 'Tenggat hari ini', go:'tasks'}));
+  S.events.filter(x => x.date===t).forEach(x => list.push({i:'cal', c:'c-green', t:x.title, s:'Agenda hari ini'+(x.time?' · '+x.time:''), go:'calendar'}));
+  return list;
+}
+$('#bellBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const dd = $('#bellDd'), list = notifications();
+  $$('.dropdown').forEach(d=>{ if(d!==dd) d.classList.remove('open'); });
+  dd.innerHTML = `<div class="dd-title">Pengingat (${list.length})</div>` + (list.length ? list.map(n => `<button class="dd-item" data-go="${n.go}"><span class="ql-ico ${n.c}" style="width:34px;height:34px">${ic(n.i,'sm')}</span><span><b style="font-size:12.5px;font-weight:500">${esc(n.t)}</b><small>${n.s}</small></span></button>`).join('') : '<div class="dd-empty">Semua beres. Mantap! 🎉</div>');
+  dd.classList.toggle('open');
+});
+$('#profileBtn').addEventListener('click', e => {
+  e.stopPropagation();
+  const dd = $('#profileDd');
+  $$('.dropdown').forEach(d=>{ if(d!==dd) d.classList.remove('open'); });
+  dd.innerHTML = `<div style="padding:10px"><b style="font-size:13px">${esc(S.settings.name)}</b><small style="display:block;color:var(--muted);font-size:11.5px">${esc(S.settings.role)}</small></div>
+    <button class="dd-item" data-go="settings">${ic('sliders','sm')}<span>Pengaturan</span></button>
+    ${S.settings.pin ? `<button class="dd-item" id="lockNow">${ic('lock','sm')}<span>Kunci dashboard</span></button>`:''}`;
+  dd.classList.toggle('open');
+  const ln = $('#lockNow'); if(ln) ln.onclick = () => { dd.classList.remove('open'); ssSet('jsr-unlocked',''); showLock(); };
+});
+
+/* Search */
+function searchIndex(){
+  const idx = [];
+  PAGES.forEach(p => idx.push({l:p.title, s:'Menu', i:p.icon, c:'c-blue', act:()=>go(p.id)}));
+  TASKS.forEach(t => { idx.push({l:t.title, s:'Tugas rutin', i:t.icon, c:t.color, act:()=>go('tasks')}); idx.push({l:'Tutorial: '+t.title, s:'Panduan singkat', i:'info', c:t.color, act:()=>showTutorial(t.id)}); });
+  LINKS_META.forEach(l => idx.push({l:l.label, s:'Quick link · '+l.sub, i:l.icon, c:l.color, act:()=>openLink(l.key)}));
+  PRODUCTS.forEach(p => idx.push({l:p.n, s:'Produk Jamkrindo Syariah', i:'shield', c:'c-green', act:()=>go('onboarding')}));
+  S.todos.forEach(t => idx.push({l:t.text, s:'Tugas tambahan', i:'file', c:'c-rose', act:()=>go('tasks')}));
+  S.events.forEach(e => idx.push({l:e.title, s:'Agenda · '+fmtShort(parseDk(e.date)), i:'cal', c:'c-green', act:()=>{ calSel = e.date; calMonth = parseDk(e.date); go('calendar'); }}));
+  return idx;
+}
+let searchRes = [];
+$('#searchIco').outerHTML = ic('search');
+$('#searchInput').addEventListener('input', e => {
+  const q = e.target.value.trim().toLowerCase(), dd = $('#searchDd');
+  if(!q){ dd.classList.remove('open'); return; }
+  searchRes = searchIndex().filter(x => (x.l+' '+x.s).toLowerCase().includes(q)).slice(0,8);
+  dd.innerHTML = searchRes.length ? searchRes.map((r,i) => `<button class="dd-item ${i===0?'hl':''}" data-sr="${i}"><span class="ql-ico ${r.c}" style="width:32px;height:32px">${ic(r.i,'sm')}</span><span><b style="font-size:12.5px;font-weight:500">${esc(r.l)}</b><small>${esc(r.s)}</small></span></button>`).join('') : '<div class="dd-empty">Tidak ada hasil</div>';
+  dd.classList.add('open');
+});
+$('#searchInput').addEventListener('keydown', e => { if(e.key==='Enter' && searchRes[0]){ pickSearch(0); } });
+$('#searchDd').addEventListener('click', e => { const b = e.target.closest('[data-sr]'); if(b) pickSearch(+b.dataset.sr); });
+function pickSearch(i){ const r = searchRes[i]; $('#searchDd').classList.remove('open'); $('#searchInput').value=''; r.act(); }
+
+/* ---------------- Dashboard ---------------- */
+function greetWord(){ const h = new Date().getHours(); return h<11?'Selamat pagi':h<15?'Selamat siang':h<18?'Selamat sore':'Selamat malam'; }
+function renderDashboard(){
+  const pending = TASKS.length - doneCount();
+  $('#heroGreet').textContent = `${greetWord()}, ${firstName()}!`;
+  $('#heroMsg').innerHTML = pending ? `Kamu punya <b>${pending} tugas rutin</b> yang belum selesai hari ini. Semangat, satu per satu pasti beres! 💪` : 'Semua tugas rutin hari ini sudah selesai. Kerja bagus! 🎉';
+  // internship progress
+  const st = S.settings.start, en = S.settings.end, ip = $('#internProg');
+  if(st){
+    const s = parseDk(st), n = parseDk(today());
+    const day = Math.floor((n - s)/864e5) + 1;
+    if(en){
+      const total = Math.floor((parseDk(en) - s)/864e5) + 1;
+      const pct = Math.max(0, Math.min(100, Math.round(day/total*100)));
+      ip.innerHTML = day<1 ? `<small>Magang dimulai ${fmtShort(s)}</small>` : day>total ? `<small>Periode magang telah selesai. Terima kasih! 🙏</small>` : `<small>Hari ke-${day} dari ${total} · sisa ${total-day} hari</small><div class="bar"><i style="width:${pct}%"></i></div>`;
+    } else ip.innerHTML = day>=1 ? `<small>Hari ke-${day} magang</small>` : '';
+  } else ip.innerHTML = '';
+
+  renderAttendance();
+
+  // stat cards
+  const d = dayData();
+  const cards = TASKS.map(t => {
+    const x = d[t.id];
+    const inner = x.done ? ic('check') : (x.count>0 ? 'Proses' : '0%');
+    const pct = x.done ? 100 : (x.count>0 ? 50 : 0);
+    return `<div class="card stat" data-go="tasks"><div class="num">${x.count}</div><div class="lbl"><b>${t.title.replace(' PT Jamkrindo Syariah','')}</b><small>${t.unit} hari ini</small></div>${ring(pct, t.ring, inner)}</div>`;
+  });
+  const dc = doneCount(), pct = Math.round(dc/TASKS.length*100);
+  cards.push(`<div class="card stat" data-go="tasks"><div class="num">${dc}<span style="font-size:16px;color:var(--muted)">/${TASKS.length}</span></div><div class="lbl"><b>Progres Harian</b><small>tugas rutin selesai</small></div>${ring(pct, '#253591', pct+'%')}</div>`);
+  $('#statGrid').innerHTML = cards.join('');
+
+  renderAttTable();
+  renderMiniCal();
+
+  $('#quickLinks').innerHTML = LINKS_META.map(l => `<button class="ql-item" data-link="${l.key}"><span class="ql-ico ${l.color}">${ic(l.icon)}</span><span class="t"><b>${l.label}</b><small>${S.settings.links[l.key] ? l.sub : '⚠︎ Link belum diatur'}</small></span><span class="ql-go">${ic('ext','sm')}</span></button>`).join('');
+
+  const up = S.events.filter(e => e.date >= today()).sort((a,b)=> (a.date+(a.time||'')).localeCompare(b.date+(b.time||''))).slice(0,4);
+  $('#upcoming').innerHTML = up.length ? up.map(agendaItem).join('') : `<div class="empty" style="padding:12px">Belum ada agenda. <a href="#" class="link" data-go="calendar">Tambah agenda</a></div>`;
+}
+
+function renderAttendance(){
+  const rec = S.attendance[today()] || {};
+  $('#tIn').textContent = rec.in || '--:--';
+  $('#tOut').textContent = rec.out || '--:--';
+  const btn = $('#attBtn'), hint = $('#attHint'), pill = $('#attPill');
+  $$('#modeSeg button').forEach(b => { b.classList.toggle('on', b.dataset.mode === (rec.mode || S.mode)); b.disabled = !!rec.in; });
+  if(!rec.in){
+    btn.className = 'big-btn in'; btn.innerHTML = ic('login') + 'Check-in sekarang';
+    hint.textContent = `Jam masuk ${S.settings.jamMasuk} WIB`;
+    pill.innerHTML = '<span class="pill mute"><span class="dotc" style="background:#C6C9D8"></span>Belum absen</span>';
+  } else if(!rec.out){
+    btn.className = 'big-btn out'; btn.innerHTML = ic('logout') + 'Check-out';
+    hint.textContent = `Jam pulang ${S.settings.jamPulang} WIB · ${rec.mode}`;
+    pill.innerHTML = statusPill(rec);
+  } else {
+    btn.className = 'big-btn done'; btn.innerHTML = ic('check') + 'Absensi hari ini lengkap';
+    hint.textContent = `Terima kasih, sampai jumpa besok! · ${rec.mode}`;
+    pill.innerHTML = statusPill(rec);
+  }
+  tick();
+}
+function late(rec){ return rec.in && toMin(rec.in) > toMin(S.settings.jamMasuk); }
+function statusPill(rec){
+  if(late(rec)) return '<span class="pill warn"><span class="dotc" style="background:#F2A33A"></span>Terlambat</span>';
+  return '<span class="pill ok"><span class="dotc" style="background:#9bd21c"></span>Tepat waktu</span>';
+}
+function tick(){
+  const n = new Date();
+  $('#clock').innerHTML = `${pad(n.getHours())}:${pad(n.getMinutes())}<small>:${pad(n.getSeconds())}</small>`;
+  $('#clockDate').textContent = fmtLong(n);
+  const rec = S.attendance[today()];
+  if(rec && rec.in){
+    const end = rec.out ? toMin(rec.out) : n.getHours()*60+n.getMinutes();
+    $('#tDur').textContent = durStr(end - toMin(rec.in));
+  } else $('#tDur').textContent = '-';
+}
+setInterval(() => { if(current==='dashboard') tick(); }, 1000);
+
+$('#modeSeg').addEventListener('click', e => { const b = e.target.closest('button'); if(!b || b.disabled) return; S.mode = b.dataset.mode; save(); renderAttendance(); });
+$('#attBtn').addEventListener('click', () => {
+  const t = today(), now = new Date(), rec = S.attendance[t];
+  if(!rec || !rec.in){
+    S.attendance[t] = {in: hm(now), out:'', mode:S.mode};
+    save(); renderDashboard(); renderTop();
+    toast(late(S.attendance[t]) ? `Check-in ${hm(now)} tercatat (terlambat)` : `Check-in ${hm(now)} tercatat. Selamat bekerja!`, 'login');
+  } else if(!rec.out){
+    const doOut = () => { rec.out = hm(new Date()); save(); renderDashboard(); toast(`Check-out ${rec.out} tercatat. Hati-hati di jalan!`, 'logout'); };
+    const pend = TASKS.length - doneCount();
+    if(toMin(hm(now)) < toMin(S.settings.jamPulang) || pend>0){
+      const msgs = [];
+      if(toMin(hm(now)) < toMin(S.settings.jamPulang)) msgs.push(`Sekarang ${hm(now)}, belum jam pulang (${S.settings.jamPulang}).`);
+      if(pend>0) msgs.push(`Masih ada ${pend} tugas rutin yang belum ditandai selesai.`);
+      confirmBox('Check-out sekarang?', msgs.join(' '), 'Ya, check-out', doOut);
+    } else doOut();
+  }
+});
+
+function attRows(limit){
+  const keys = Object.keys(S.attendance).sort().reverse();
+  return limit ? keys.slice(0,limit) : keys;
+}
+function attRowHtml(k){
+  const r = S.attendance[k];
+  let st;
+  if(!r.out && k!==today()) st = '<span class="status"><span class="dotc" style="background:#E5484D"></span>Lupa check-out</span>';
+  else if(!r.out) st = '<span class="status"><span class="dotc" style="background:#253591"></span>Sedang bekerja</span>';
+  else if(late(r)) st = '<span class="status"><span class="dotc" style="background:#F2A33A"></span>Terlambat</span>';
+  else st = '<span class="status"><span class="dotc" style="background:#9bd21c"></span>Tepat waktu</span>';
+  const dur = r.out ? durStr(toMin(r.out)-toMin(r.in)) : '-';
+  return `<tr><td>${fmtShort(parseDk(k))}</td><td>${r.in||'-'}</td><td>${r.out||'-'}</td><td>${dur}</td><td>${esc(r.mode||'-')}</td><td>${st}</td><td style="text-align:right"><button class="icon-btn row-act" style="width:30px;height:30px" data-delatt="${k}" title="Hapus catatan">${ic('trash','sm')}</button></td></tr>`;
+}
+const attHead = '<thead><tr><th>Tanggal</th><th>Masuk</th><th>Pulang</th><th>Durasi</th><th>Lokasi</th><th>Status</th><th></th></tr></thead>';
+function renderAttTable(){
+  const rows = attRows(5);
+  $('#attTable').innerHTML = rows.length ? attHead + '<tbody>' + rows.map(attRowHtml).join('') + '</tbody>' : '<tbody><tr><td class="empty" style="border:0">Belum ada riwayat absensi. Tekan “Check-in sekarang” untuk mulai.</td></tr></tbody>';
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-delatt]'); if(!b) return;
+  const k = b.dataset.delatt;
+  confirmBox('Hapus catatan absensi?', `Catatan tanggal ${fmtLong(parseDk(k))} akan dihapus.`, 'Hapus', () => { delete S.attendance[k]; save(); renderDashboard(); toast('Catatan absensi dihapus','trash'); }, true);
+});
+$('#allAttBtn').addEventListener('click', () => {
+  const rows = attRows();
+  const total = rows.length, lateN = rows.filter(k => late(S.attendance[k])).length;
+  openModal(`<div class="modal-h"><div><h3>Semua Riwayat Absensi</h3><p>${total} hari tercatat · ${lateN} terlambat</p></div><button class="icon-btn" data-close aria-label="Tutup">${ic('x')}</button></div>
+    <div class="table-wrap" style="max-height:52vh;overflow:auto"><table>${rows.length ? attHead + '<tbody>'+rows.map(attRowHtml).join('')+'</tbody>' : '<tr><td class="empty">Belum ada data</td></tr>'}</table></div>
+    <div class="modal-f" style="margin-top:16px"><button class="btn btn-ghost" id="csvModal">${ic('download','sm')}Unduh CSV</button></div>`);
+  $('#modal').style.maxWidth = '760px';
+  $('#csvModal').onclick = exportCSV;
+});
+function exportCSV(){
+  const rows = [['Tanggal','Hari','Jam Masuk','Jam Pulang','Durasi (menit)','Lokasi','Status']];
+  Object.keys(S.attendance).sort().forEach(k => {
+    const r = S.attendance[k];
+    rows.push([k, parseDk(k).toLocaleDateString('id-ID',{weekday:'long'}), r.in||'', r.out||'', r.out ? toMin(r.out)-toMin(r.in) : '', r.mode||'', !r.out ? 'Belum check-out' : late(r) ? 'Terlambat' : 'Tepat waktu']);
+  });
+  download(`absensi-magang-${today()}.csv`, '﻿' + rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n'), 'text/csv');
+}
+function download(name, content, type){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], {type}));
+  a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 1000);
+}
+
+/* ---------------- Calendars ---------------- */
+let miniMonth = new Date(); miniMonth.setDate(1);
+let calMonth = new Date(); calMonth.setDate(1);
+let calSel = today();
+function monthCells(base){
+  const y = base.getFullYear(), m = base.getMonth();
+  const first = new Date(y,m,1), offset = (first.getDay()+6)%7;
+  const start = new Date(y,m,1-offset), cells = [];
+  const weeks = Math.ceil((offset + new Date(y,m+1,0).getDate())/7);
+  for(let i=0;i<weeks*7;i++){ const d = new Date(start); d.setDate(start.getDate()+i); cells.push(d); }
+  return {cells, m};
+}
+const WD = ['SEN','SEL','RAB','KAM','JUM','SAB','MIN'];
+function renderMiniCal(){
+  const {cells, m} = monthCells(miniMonth), t = today();
+  $('#miniCal').innerHTML = `<div class="mcal-h"><button class="icon-btn" id="mPrev" aria-label="Bulan sebelumnya">${ic('chevL')}</button><b>${fmtMonth(miniMonth)}</b><button class="icon-btn" id="mNext" aria-label="Bulan berikutnya">${ic('chevR')}</button></div>
+  <div class="cal-grid">${WD.map(w=>`<div class="wd">${w}</div>`).join('')}${cells.map(d => {
+    const k = dk(d), we = d.getDay()===0||d.getDay()===6;
+    const dots = [];
+    if(S.attendance[k]) dots.push('<i style="background:#9bd21c"></i>');
+    S.events.filter(e=>e.date===k).slice(0,2).forEach(e => dots.push(`<i style="background:${EV_CAT[e.cat].fg}"></i>`));
+    return `<div class="cal-day ${d.getMonth()!==m?'out':''} ${we?'we':''} ${k===t?'today':''}" data-day="${k}">${d.getDate()}<span class="dots">${dots.join('')}</span></div>`;
+  }).join('')}</div>
+  <div class="cal-legend"><span><span class="dotc" style="background:#9bd21c"></span>Hadir</span><span><span class="dotc" style="background:#253591"></span>Rapat</span><span><span class="dotc" style="background:#C0353A"></span>Deadline</span></div>`;
+  $('#mPrev').onclick = () => { miniMonth.setMonth(miniMonth.getMonth()-1); renderMiniCal(); };
+  $('#mNext').onclick = () => { miniMonth.setMonth(miniMonth.getMonth()+1); renderMiniCal(); };
+}
+document.addEventListener('click', e => {
+  const c = e.target.closest('[data-day]'); if(!c) return;
+  calSel = c.dataset.day; calMonth = parseDk(calSel); calMonth.setDate(1);
+  if(current!=='calendar') go('calendar'); else renderBigCal();
+});
+function renderBigCal(){
+  const {cells, m} = monthCells(calMonth), t = today();
+  $('#bigCal').innerHTML = `<div class="mcal-h" style="margin-bottom:18px"><b style="font-size:18px">${fmtMonth(calMonth)}</b><div style="display:flex;gap:6px;align-items:center"><button class="btn btn-line btn-sm" id="cToday">Hari ini</button><button class="icon-btn" id="cPrev" aria-label="Bulan sebelumnya">${ic('chevL')}</button><button class="icon-btn" id="cNext" aria-label="Bulan berikutnya">${ic('chevR')}</button></div></div>
+  <div class="cal-grid">${WD.map(w=>`<div class="wd">${w}</div>`).join('')}${cells.map(d => {
+    const k = dk(d), we = d.getDay()===0||d.getDay()===6, evs = S.events.filter(e=>e.date===k).sort((a,b)=>(a.time||'').localeCompare(b.time||''));
+    const a = S.attendance[k];
+    const dots = [];
+    if(a) dots.push('<i style="background:#9bd21c"></i>');
+    evs.slice(0,2).forEach(e => dots.push(`<i style="background:${EV_CAT[e.cat].fg}"></i>`));
+    return `<div class="cal-day ${d.getMonth()!==m?'out':''} ${we?'we':''} ${k===t?'today':''} ${k===calSel?'sel':''}" data-day="${k}"><span class="dnum">${d.getDate()}</span>${a?`<span class="att-mark">${ic('check','sm')}${a.in}</span>`:''}${evs.slice(0,2).map(e=>`<span class="ev" style="background:${EV_CAT[e.cat].bg};color:${EV_CAT[e.cat].fg}">${esc(e.title)}</span>`).join('')}${evs.length>2?`<span class="ev muted">+${evs.length-2} lagi</span>`:''}<span class="dots">${dots.join('')}</span></div>`;
+  }).join('')}</div>`;
+  $('#cPrev').onclick = () => { calMonth.setMonth(calMonth.getMonth()-1); renderBigCal(); };
+  $('#cNext').onclick = () => { calMonth.setMonth(calMonth.getMonth()+1); renderBigCal(); };
+  $('#cToday').onclick = () => { calMonth = new Date(); calMonth.setDate(1); calSel = today(); renderBigCal(); };
+  renderSelDay();
+}
+function agendaItem(e){
+  const c = EV_CAT[e.cat] || EV_CAT.lain;
+  return `<div class="agenda-item"><span class="bar" style="background:${c.fg}"></span><div class="t"><b>${esc(e.title)}</b><small>${fmtShort(parseDk(e.date))}${e.time?' · '+e.time:''} · ${c.l}</small></div><button class="icon-btn row-act" style="width:30px;height:30px" data-delev="${e.id}" title="Hapus agenda">${ic('trash','sm')}</button></div>`;
+}
+function renderSelDay(){
+  const d = parseDk(calSel);
+  $('#selDateTitle').textContent = fmtLong(d);
+  const a = S.attendance[calSel];
+  $('#selAtt').innerHTML = a ? `<span class="pill ok">${ic('check','sm')}Hadir ${a.in}${a.out?' – '+a.out:''} · ${esc(a.mode||'')}</span>` : '';
+  const evs = S.events.filter(e=>e.date===calSel).sort((x,y)=>(x.time||'').localeCompare(y.time||''));
+  $('#selAgenda').innerHTML = evs.length ? evs.map(agendaItem).join('') : '<div class="empty" style="padding:12px 0;text-align:left">Tidak ada agenda di tanggal ini.</div>';
+  $('#evDate').value = calSel;
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-delev]'); if(!b) return;
+  S.events = S.events.filter(x => x.id !== b.dataset.delev); save();
+  renderPage(current); toast('Agenda dihapus','trash');
+});
+$('#evForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const ev = {id:uid(), title:$('#evTitle').value.trim(), date:$('#evDate').value, time:$('#evTime').value, cat:$('#evCat').value};
+  if(!ev.title || !ev.date) return;
+  S.events.push(ev); save();
+  calSel = ev.date; calMonth = parseDk(ev.date); calMonth.setDate(1);
+  $('#evTitle').value=''; $('#evTime').value='';
+  renderBigCal(); renderTop(); toast('Agenda tersimpan','cal');
+});
+
+/* ---------------- Tasks ---------------- */
+function showTutorial(id){
+  const t = TASKS.find(x=>x.id===id); if(!t) return;
+  openModal(`<div class="modal-h"><div class="task-ico ${t.color}" style="width:44px;height:44px">${ic(t.icon)}</div><div><h3>${t.title}</h3><p>Tutorial singkat</p></div><button class="icon-btn" data-close aria-label="Tutup">${ic('x')}</button></div>
+    <ol class="steps">${t.steps.map(s=>`<li><span>${s}</span></li>`).join('')}</ol>
+    <div class="tipbox">${ic('bulb')}<span>${t.tip}</span></div>
+    <div class="modal-f"><button class="btn btn-line" data-close>Tutup</button><button class="btn btn-primary" data-link="${t.linkKey}">${ic('ext','sm')}${t.linkLabel}</button></div>`);
+  $('#modal').style.maxWidth = '560px';
+}
+function renderTasks(){
+  const d = dayData();
+  $('#taskDate').textContent = fmtLong(new Date());
+  $('#taskList').innerHTML = TASKS.map(t => {
+    const x = d[t.id];
+    return `<div class="card task ${x.done?'is-done':''}">
+      <div class="task-ico ${t.color}">${ic(t.icon)}</div>
+      <div style="min-width:0">
+        <h3>${t.title}${x.done?'<span class="pill ok">Selesai</span>':''}</h3>
+        <p>${t.short}</p>
+        <div class="task-btns">
+          <button class="btn btn-ghost btn-sm" data-info="${t.id}">${ic('info','sm')}Info & tutorial</button>
+          <button class="btn btn-primary btn-sm" data-link="${t.linkKey}">${ic('ext','sm')}${t.linkLabel}</button>
+        </div>
+      </div>
+      <div class="task-side">
+        <div><div class="counter"><button data-cnt="${t.id}" data-v="-1" aria-label="Kurangi">${ic('minus','sm')}</button><b>${x.count}</b><button data-cnt="${t.id}" data-v="1" aria-label="Tambah">${ic('plus','sm')}</button></div><div class="counter-lbl">${t.unit}</div></div>
+        <label class="check"><input type="checkbox" data-done="${t.id}" ${x.done?'checked':''}><span class="box">${ic('check')}</span>Tandai selesai</label>
+      </div>
+    </div>`;
+  }).join('');
+  renderTodos();
+  const dc = doneCount(), pct = Math.round(dc/TASKS.length*100);
+  $('#bigRing').innerHTML = `<div style="display:flex;justify-content:center">${ring(pct,'#253591',`<b style="font-size:24px;color:var(--ink)">${pct}%</b>`,140,12)}</div><p class="muted" style="margin-top:12px;font-size:13px">${dc} dari ${TASKS.length} tugas rutin selesai</p>${dc===TASKS.length?'<p style="margin-top:6px"><span class="pill ok">Semua beres hari ini 🎉</span></p>':''}`;
+  renderWeek();
+}
+function renderWeek(){
+  const days = [];
+  for(let i=6;i>=0;i--){ const d = new Date(); d.setDate(d.getDate()-i); days.push(d); }
+  const totals = days.map(d => { const x = S.daily[dk(d)]||{}; return TASKS.map(t => (x[t.id]||{}).count||0); });
+  const max = Math.max(1, ...totals.map(a => a.reduce((s,v)=>s+v,0)));
+  $('#weekChart').innerHTML = `<div class="week">${days.map((d,i) => {
+    const sum = totals[i].reduce((s,v)=>s+v,0);
+    return `<div title="${fmtShort(d)}: ${TASKS.map((t,j)=>t.unit+' '+totals[i][j]).join(', ')}"><b>${sum||''}</b><div class="bar">${TASKS.map((t,j)=>`<i style="height:${totals[i][j]/max*100}%;background:${t.ring}"></i>`).join('')}</div><small>${d.toLocaleDateString('id-ID',{weekday:'short'})}</small></div>`;
+  }).join('')}</div>
+  <div class="cal-legend">${TASKS.map(t=>`<span><span class="dotc" style="background:${t.ring}"></span>${t.unit}</span>`).join('')}</div>`;
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-cnt]'); if(!b) return;
+  const x = dayData()[b.dataset.cnt];
+  x.count = Math.max(0, x.count + Number(b.dataset.v)); save(); renderTasks();
+});
+document.addEventListener('change', e => {
+  const c = e.target.closest('[data-done]');
+  if(c){
+    dayData()[c.dataset.done].done = c.checked; save(); renderTasks(); buildNav(); renderTop();
+    if(c.checked) toast(doneCount()===TASKS.length ? 'Semua tugas rutin selesai. Mantap! 🎉' : 'Tugas ditandai selesai');
+    return;
+  }
+  const td = e.target.closest('[data-todo]');
+  if(td){ const t = S.todos.find(x=>x.id===td.dataset.todo); if(t){ t.done = td.checked; save(); renderTodos(); renderTop(); } return; }
+  const ob = e.target.closest('[data-ob]');
+  if(ob){ S.onboarding[ob.dataset.ob] = ob.checked; save(); renderOnboardingList(); }
+});
+function renderTodos(){
+  const t = today();
+  const prioOrder = {tinggi:0, normal:1, rendah:2};
+  const list = [...S.todos].sort((a,b) => (a.done-b.done) || (prioOrder[a.prio]-prioOrder[b.prio]) || (a.due||'9999').localeCompare(b.due||'9999'));
+  const open = S.todos.filter(x=>!x.done).length;
+  $('#todoCount').textContent = S.todos.length ? `${open} belum selesai` : '';
+  $('#todoList').innerHTML = list.length ? list.map(x => {
+    const over = !x.done && x.due && x.due < t;
+    const pr = x.prio==='tinggi' ? '<span class="pill warn">Prioritas tinggi</span>' : x.prio==='rendah' ? '<span class="pill mute">Rendah</span>' : '';
+    return `<div class="todo ${x.done?'done':''}"><label class="check"><input type="checkbox" data-todo="${x.id}" ${x.done?'checked':''}><span class="box">${ic('check')}</span></label>
+      <div class="t"><b>${esc(x.text)}</b><small>${x.due ? (over?'<span style="color:var(--danger)">Lewat tenggat · </span>':'')+'Tenggat '+fmtShort(parseDk(x.due)) : 'Tanpa tenggat'}</small></div>${pr}
+      <button class="icon-btn row-act" style="width:30px;height:30px" data-deltodo="${x.id}" title="Hapus">${ic('trash','sm')}</button></div>`;
+  }).join('') : '<div class="empty">Belum ada tugas tambahan. Catat tugas dari pembimbing di sini.</div>';
+}
+$('#todoForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const text = $('#todoText').value.trim(); if(!text) return;
+  S.todos.push({id:uid(), text, due:$('#todoDue').value, prio:$('#todoPrio').value, done:false});
+  save(); $('#todoText').value=''; $('#todoDue').value=''; $('#todoPrio').value='normal';
+  renderTodos(); renderTop(); toast('Tugas ditambahkan');
+});
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-deltodo]'); if(!b) return;
+  S.todos = S.todos.filter(x=>x.id!==b.dataset.deltodo); save(); renderTodos(); renderTop();
+});
+
+/* ---------------- Onboarding ---------------- */
+let prodFilter = 'all';
+function renderOnboarding(){
+  $('#products').innerHTML = PRODUCTS.filter(p => prodFilter==='all' || p.c===prodFilter).map(p =>
+    `<div class="product"><span class="tag ${p.c==='pembiayaan'?'c-blue':'c-green'}">${p.c==='pembiayaan'?'Kafalah Pembiayaan':'Suretyship & Garansi'}</span><b>${p.n}</b><p>${p.d}</p></div>`).join('');
+  $('#roles').innerHTML = ROLES.map(r => `<div class="role"><span class="ql-ico ${r.c}">${ic(r.i,'sm')}</span><div><b>${r.t}</b><small>${r.d}</small></div></div>`).join('');
+  $('#gloss').innerHTML = GLOSS.map(g => `<div><b>${g[0]}</b><p>${g[1]}</p></div>`).join('');
+  renderOnboardingList();
+}
+function renderOnboardingList(){
+  const done = ONBOARD.filter((_,i)=>S.onboarding['o'+i]).length;
+  $('#obPct').textContent = `${done}/${ONBOARD.length}`;
+  $('#obPct').className = 'pill ' + (done===ONBOARD.length ? 'ok' : 'info');
+  $('#obList').innerHTML = ONBOARD.map((o,i) => `<label class="ob-item check ${S.onboarding['o'+i]?'done':''}"><input type="checkbox" data-ob="o${i}" ${S.onboarding['o'+i]?'checked':''}><span class="box">${ic('check')}</span><span>${o}</span></label>`).join('');
+}
+$('#prodChips').addEventListener('click', e => {
+  const c = e.target.closest('.chip'); if(!c) return;
+  prodFilter = c.dataset.f; $$('#prodChips .chip').forEach(x=>x.classList.toggle('on', x===c)); renderOnboarding();
+});
+$$('[data-ic]').forEach(el => el.outerHTML = ic(el.dataset.ic,'sm'));
+
+/* ---------------- Settings ---------------- */
+function renderSettings(){
+  const s = S.settings;
+  $('#sName').value = s.name; $('#sRole').value = s.role; $('#sStart').value = s.start; $('#sEnd').value = s.end;
+  $('#sIn').value = s.jamMasuk; $('#sOut').value = s.jamPulang; $('#sPin').value = s.pin;
+  $('#linkForm').innerHTML = LINKS_META.map(l => `<div class="field full"><label for="lk_${l.key}">${l.label}</label><input class="input" type="url" id="lk_${l.key}" data-lk="${l.key}" placeholder="https://…" value="${esc(s.links[l.key])}"></div>`).join('')
+    + `<p class="hint full">Untuk Excel Online: buka file di browser → tombol <b>Share/Bagikan</b> → <b>Copy link</b>, lalu tempel di sini.</p><button class="btn btn-primary full" type="submit">Simpan link</button>`;
+  $('#exportBtn').innerHTML = ic('download','sm') + 'Unduh cadangan (.json)';
+  $('#csvBtn').innerHTML = ic('file','sm') + 'Rekap absensi (.csv)';
+  const ii = $('#importIco'); if(ii) ii.outerHTML = ic('upload','sm');
+}
+$('#profileForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const pin = $('#sPin').value.trim();
+  if(pin && !/^\d{4,8}$/.test(pin)){ toast('PIN harus 4–8 digit angka','info'); return; }
+  Object.assign(S.settings, {name:$('#sName').value.trim()||'Magang', role:$('#sRole').value.trim(), start:$('#sStart').value, end:$('#sEnd').value, jamMasuk:$('#sIn').value||'08:00', jamPulang:$('#sOut').value||'17:00', pin});
+  save(); renderTop(); toast('Profil disimpan');
+});
+$('#linkForm').addEventListener('submit', e => {
+  e.preventDefault();
+  $$('[data-lk]').forEach(i => S.settings.links[i.dataset.lk] = i.value.trim());
+  save(); toast('Link disimpan');
+});
+$('#exportBtn').addEventListener('click', () => download(`jsr-intern-hub-backup-${today()}.json`, JSON.stringify(S,null,2), 'application/json'));
+$('#csvBtn').addEventListener('click', exportCSV);
+$('#importFile').addEventListener('change', e => {
+  const f = e.target.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = () => {
+    try{
+      const d = JSON.parse(rd.result);
+      if(!d.settings || !d.attendance) throw 0;
+      lsSet(LS_KEY, JSON.stringify(d)); S = loadState(); go('dashboard'); toast('Cadangan berhasil dipulihkan');
+    }catch(err){ toast('File cadangan tidak valid','info'); }
+  };
+  rd.readAsText(f); e.target.value='';
+});
+$('#resetBtn').addEventListener('click', () => confirmBox('Hapus semua data?', 'Absensi, tugas, agenda, dan pengaturan akan dihapus permanen dari browser ini. Unduh cadangan dulu jika perlu.', 'Hapus semua', () => { S = freshState(); save(); go('dashboard'); toast('Semua data dihapus','trash'); }, true));
+
+/* ---------------- Lock ---------------- */
+function showLock(){
+  $('#lock').classList.add('open');
+  $('#lockHello').textContent = `Halo ${firstName()}, masukkan PIN untuk membuka dashboard`;
+  $('#pinInput').value=''; $('#lockErr').textContent='';
+  setTimeout(()=>$('#pinInput').focus(), 50);
+}
+$('#lockForm').addEventListener('submit', e => {
+  e.preventDefault();
+  if($('#pinInput').value === S.settings.pin){ ssSet('jsr-unlocked','1'); $('#lock').classList.remove('open'); }
+  else { $('#lockErr').textContent = 'PIN salah, coba lagi.'; const b = $('.lock-box'); b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); $('#pinInput').value=''; }
+});
+
+/* ---------------- Init ---------------- */
+$('#mailBtn').innerHTML = ic('mail');
+$('#pfChev').outerHTML = ic('chevD','sm');
+const startPage = (location.hash||'').slice(1);
+go(PAGES.some(p=>p.id===startPage) ? startPage : 'dashboard');
+if(S.settings.pin && ssGet('jsr-unlocked')!=='1') showLock();
+// pindah hari otomatis bila tab dibiarkan terbuka semalaman
+let lastDay = today();
+setInterval(() => { if(today()!==lastDay){ lastDay = today(); renderPage(current); buildNav(); } }, 60000);
+</script>
+</body>
+</html>
